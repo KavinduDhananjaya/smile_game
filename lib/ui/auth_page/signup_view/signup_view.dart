@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:smile_game/ui/widgets/context_extension.dart';
 
 import '../../../theme/styled_colors.dart';
 import '../../widgets/already_have_an_account_acheck.dart';
+import '../../widgets/reusable_widgets.dart';
 import '../../widgets/social_icon.dart';
 
 class SignUpView extends StatefulWidget {
@@ -59,6 +61,13 @@ class SignUpViewState extends State<SignUpView> {
         onTap: () => FocusScope.of(context).requestFocus(_viewFocus),
         child: SingleChildScrollView(
           child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xff1F1147), Color(0xff362679)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
             height: mediaData.size.height,
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -68,14 +77,11 @@ class SignUpViewState extends State<SignUpView> {
                 const SizedBox(
                   height: 32,
                 ),
-                const Text(
-                  "SignUp",
-                  style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),
+                Padding(
+                  padding:
+                  EdgeInsets.only(top: context.dynamicHeight(0.01)),
+                  child: ReusableWidgets.getImageAsset("logo_shadow.png"),
                 ),
-                const SizedBox(
-                  height: 22,
-                ),
-                SvgPicture.asset("assets/icons/signup.svg",height: mediaData.size.height*0.25),
                 const SizedBox(
                   height: 24,
                 ),
@@ -125,12 +131,28 @@ class SignUpViewState extends State<SignUpView> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Hero(
-                        tag: "signup_btn",
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          child: Text(
-                            "Sign Up".toUpperCase(),
+                      SizedBox(
+                        height: context.dynamicHeight(0.09),
+                        width: context.dynamicWidth(0.8),
+                        child: InkWell(
+                          onTap : () {
+                            Navigator.pop(context);
+                          },
+                          child: Card(
+                            color: Colors.deepPurpleAccent,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Center(
+                              child: Text(
+                                "SignUp",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline5
+                                    ?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -145,19 +167,19 @@ class SignUpViewState extends State<SignUpView> {
                         margin: EdgeInsets.symmetric(vertical: mediaData.size.height * 0.02),
                         width: mediaData.size.width * 0.8,
                         child: Row(
-                          children: <Widget>[
+                          children: const <Widget>[
                             Expanded(
                               child: Divider(
                                 color: Color(0xFFD9D9D9),
-                                height: 1.5,
+                                height: 2,
                               ),
                             ),
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.symmetric(horizontal: 10),
                               child: Text(
                                 "OR",
                                 style: TextStyle(
-                                  color: StyledColors.primaryColor,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -165,7 +187,7 @@ class SignUpViewState extends State<SignUpView> {
                             Expanded(
                               child: Divider(
                                 color: Color(0xFFD9D9D9),
-                                height: 1.5,
+                                height: 2,
                               ),
                             ),
                           ],

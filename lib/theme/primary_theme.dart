@@ -52,7 +52,7 @@ abstract class PrimaryTheme {
         contentPadding: EdgeInsets.symmetric(
             horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(30)),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
           borderSide: BorderSide.none,
         ),
       ),

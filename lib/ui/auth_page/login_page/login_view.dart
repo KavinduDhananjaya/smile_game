@@ -4,10 +4,13 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:smile_game/ui/auth_page/signup_view/signup_view.dart';
 import 'package:smile_game/ui/home_page/home_page_view.dart';
+import 'package:smile_game/ui/home_page/home_screen.dart';
+import 'package:smile_game/ui/widgets/context_extension.dart';
 import 'package:smile_game/ui/widgets/social_icon.dart';
 
 import '../../../theme/styled_colors.dart';
 import '../../widgets/already_have_an_account_acheck.dart';
+import '../../widgets/reusable_widgets.dart';
 
 
 class LoginView extends StatefulWidget {
@@ -51,43 +54,6 @@ class LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    final emailField = TextFormField(
-      textCapitalization: TextCapitalization.none,
-      focusNode: _emailFocus,
-      textInputAction: TextInputAction.next,
-      keyboardType: TextInputType.emailAddress,
-      controller: _emailController,
-      decoration: const InputDecoration(labelText: "Email or ID"),
-      onFieldSubmitted: (value) {
-        _emailFocus.unfocus();
-        FocusScope.of(context).requestFocus(_passwordFocus);
-      },
-    );
-
-    final passwordField = TextFormField(
-      keyboardType: TextInputType.text,
-      obscureText: !passwordVisible,
-      focusNode: _passwordFocus,
-      controller: _passwordController,
-      textInputAction: TextInputAction.next,
-      onFieldSubmitted: (term) {
-        _passwordFocus.unfocus();
-        FocusScope.of(context).requestFocus(_viewFocus);
-      },
-      decoration: InputDecoration(
-        labelText: "Password",
-        suffixIcon: IconButton(
-          icon: !passwordVisible
-              ? const Icon(Icons.visibility_off)
-              : const Icon(Icons.visibility),
-          onPressed: () {
-            setState(() {
-              passwordVisible = !passwordVisible;
-            });
-          },
-        ),
-      ),
-    );
 
     final mediaData = MediaQuery.of(context);
 
@@ -96,6 +62,13 @@ class LoginViewState extends State<LoginView> {
         onTap: () => FocusScope.of(context).requestFocus(_viewFocus),
         child: SingleChildScrollView(
           child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xff1F1147), Color(0xff362679)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
             height: mediaData.size.height,
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -103,16 +76,13 @@ class LoginViewState extends State<LoginView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 const SizedBox(
-                  height: 32,
+                  height:64,
                 ),
-                const Text(
-                  "Login",
-                  style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),
+                Padding(
+                  padding:
+                  EdgeInsets.only(top: context.dynamicHeight(0.03)),
+                  child: ReusableWidgets.getImageAsset("logo_shadow.png"),
                 ),
-                const SizedBox(
-                  height: 32,
-                ),
-                SvgPicture.asset("assets/icons/login.svg",height: mediaData.size.height*0.25),
                 const SizedBox(
                   height: 24,
                 ),
@@ -151,21 +121,36 @@ class LoginViewState extends State<LoginView> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Hero(
-                        tag: "login_btn",
-                        child: ElevatedButton(
-                          onPressed: () {
+
+                      SizedBox(
+                        height: context.dynamicHeight(0.09),
+                        width: context.dynamicWidth(0.8),
+                        child: InkWell(
+                          onTap : () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return const HomePageView();
+                                  return const HomeScreen();
                                 },
                               ),
                             );
                           },
-                          child: Text(
-                            "Login".toUpperCase(),
+                          child: Card(
+                            color: Colors.deepPurpleAccent,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Center(
+                              child: Text(
+                                "Login",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline5
+                                    ?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -187,27 +172,27 @@ class LoginViewState extends State<LoginView> {
                         margin: EdgeInsets.symmetric(vertical: mediaData.size.height * 0.02),
                         width: mediaData.size.width * 0.8,
                         child: Row(
-                          children: <Widget>[
+                          children: const <Widget>[
                             Expanded(
                               child: Divider(
-                                color: Color(0xFFD9D9D9),
-                                height: 1.5,
+                                color: Colors.white,
+                                height: 2,
                               ),
                             ),
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.symmetric(horizontal: 10),
                               child: Text(
                                 "OR",
                                 style: TextStyle(
-                                  color: StyledColors.primaryColor,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
                             Expanded(
                               child: Divider(
-                                color: Color(0xFFD9D9D9),
-                                height: 1.5,
+                                color: Colors.white,
+                                height: 2,
                               ),
                             ),
                           ],
