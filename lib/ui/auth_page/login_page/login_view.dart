@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:smile_game/ui/auth_page/signup_view/signup_view.dart';
 import 'package:smile_game/ui/home_page/home_page_view.dart';
-import 'package:smile_game/ui/home_page/home_screen.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
 import 'package:smile_game/ui/widgets/social_icon.dart';
 
@@ -131,7 +129,7 @@ class LoginViewState extends State<LoginView> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return const HomeScreen();
+                                  return const HomePageView();
                                 },
                               ),
                             );

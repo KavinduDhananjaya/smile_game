@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smile_game/ui/main_pages/quiz_screen.dart';
+import 'package:smile_game/ui/home_page/quiz_screen.dart';
 
 class CustomStack extends StatelessWidget {
   const CustomStack({

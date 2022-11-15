@@ -8,7 +8,7 @@ import 'package:smile_game/ui/widgets/context_extension.dart';
 
 import '../../theme/text_constants.dart';
 import '../widgets/decoration.dart';
-import '../home_page/game_complete_view.dart';
+import 'game_complete_view.dart';
 
 class QuizScreen extends StatefulWidget {
   final String quizTitle;

@@ -2,7 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../main_pages/quiz_screen.dart';
+import 'quiz_screen.dart';
 import '../widgets/custom_stack.dart';
 import 'game_complete_view.dart';
 import 'level_complete_view.dart';

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smile_game/theme/primary_theme.dart';
 import 'package:smile_game/theme/styled_colors.dart';
 import 'package:smile_game/ui/auth_page/login_page/login_view.dart';
+import 'package:smile_game/ui/util/routes.dart';
 
 
 class SmileGameAppView extends StatelessWidget {
@@ -20,6 +21,7 @@ class SmileGameAppView extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Smile Game",
       theme: PrimaryTheme.generateTheme(context),
+      onGenerateRoute: Routes.generator,
       home: LoginView(key: key),
       // onGenerateRoute: Routes.generator,
     );
