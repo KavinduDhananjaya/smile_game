@@ -1,18 +1,19 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:smile_game/ui/home_page/game_view/game_complete_view.dart';
+import 'package:smile_game/ui/widgets/context_extension.dart';
 
-import 'quiz_screen.dart';
-import '../widgets/custom_stack.dart';
-import 'game_complete_view.dart';
+import 'game_view.dart';
+import '../../widgets/custom_stack.dart';
 import 'level_complete_view.dart';
 
-class SelectDifficultyView extends StatelessWidget{
+class SelectDifficultyView extends StatelessWidget {
   const SelectDifficultyView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -26,7 +27,6 @@ class SelectDifficultyView extends StatelessWidget{
         child: ListView(
           physics: const BouncingScrollPhysics(),
           children: [
-
             const Padding(
               padding: EdgeInsets.only(top: 30),
               child: Text(
@@ -66,19 +66,23 @@ class SelectDifficultyView extends StatelessWidget{
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return  QuizScreen(quizTitle: "Level One", quizId: '1', isSolved: false, quizCategory: 'quizCategory', iconListener: 1);
+                              return GameView(
+                                  quizTitle: "Level One",
+                                  quizId: '1',
+                                  isSolved: false,
+                                  quizCategory: 'quizCategory',
+                                  iconListener: 1);
                             },
                           ),
                         );
                       },
-                      child:  CustomStack(
+                      child: CustomStack(
                         image: 'assets/images/quiz_background.png',
                         text1: 'Easy',
                         padding_left: 5,
                         padding_top: 45,
                         padding: 0,
                         color: Color(0xff2D2D2D),
-
                       ),
                     ),
                   ),
@@ -123,11 +127,46 @@ class SelectDifficultyView extends StatelessWidget{
                     ),
                   ),
                 ]),
-
+            SizedBox(
+              height: context.dynamicHeight(0.2),
+            ),
+            Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: context.dynamicWidth(0.1)),
+              child: SizedBox(
+                height: context.dynamicHeight(0.09),
+                width: context.dynamicWidth(0.8),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(PageTransition(
+                        child: const GameView(
+                            quizTitle: '',
+                            quizId: '',
+                            isSolved: true,
+                            quizCategory: 'cat',
+                            iconListener: 1),
+                        type: PageTransitionType.bottomToTop,
+                        duration: const Duration(milliseconds: 500),
+                        reverseDuration: const Duration(milliseconds: 400)));
+                  },
+                  child: Card(
+                    color: Colors.deepPurpleAccent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)),
+                    child: Center(
+                      child: Text(
+                        "Select",
+                        style: Theme.of(context).textTheme.headline5?.copyWith(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-
 }

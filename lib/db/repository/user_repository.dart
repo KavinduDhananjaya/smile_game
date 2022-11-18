@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fcode_bloc/fcode_bloc.dart';
 import '../model/user_model.dart';
 
-class UserRepository extends FirebaseRepository<UserModel> {
+ class UserRepository extends FirebaseRepository<UserModel> {
   UserRepository() : super('User');
+
+
 
   @override
   UserModel fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -11,11 +13,13 @@ class UserRepository extends FirebaseRepository<UserModel> {
     final data = snapshot.data()!;
 
     return UserModel(
-      ref: snapshot.reference,
-      email: data['email'] ?? '',
-      name: data['name'] ?? '',
-      profileImage: data['profileImage'] ?? '',
-    );
+        ref: snapshot.reference,
+        email: data['email'] ?? '',
+        name: data['name'] ?? '',
+        profileImage: data['profileImage'] ?? '',
+        rank: data['rank'] ?? -1,
+        difficulty: data['difficulty'] ?? -1,
+        score: data['score'] ?? 0);
   }
 
   @override
@@ -24,6 +28,9 @@ class UserRepository extends FirebaseRepository<UserModel> {
       'email': value.email,
       'name': value.name,
       'profileImg': value.profileImage,
+      'score': value.score,
+      'rank': value.rank,
+      'difficulty': value.difficulty,
     };
   }
 
@@ -50,7 +57,6 @@ class UserRepository extends FirebaseRepository<UserModel> {
       spec: spec,
     );
   }
-
 
   @override
   Stream<Iterable<UserModel>> query({

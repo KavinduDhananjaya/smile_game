@@ -63,4 +63,10 @@ class RootCubit extends Cubit<RootState> {
     emit(RootState.initialState);
   }
 
+
+  getQuesting(){
+
+  }
+
+
 }

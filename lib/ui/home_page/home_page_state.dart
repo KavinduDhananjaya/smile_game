@@ -2,51 +2,51 @@ import 'package:flutter/material.dart';
 import 'package:smile_game/db/model/user_model.dart';
 
 @immutable
-class RootState {
-  final bool initialized;
-  final UserModel? currentUser;
-  final bool userLogged;
-  final String currentQuestionImage;
+class HomePageState {
+  final String? currentQuestionImage;
   final int? currentAnswer;
   final int score;
   final bool isProcessing;
+  final String error;
+  final int currentLevel;
+  final int currentIndex;
 
-  const RootState({
-    required this.initialized,
-    this.currentUser,
+  const HomePageState({
     this.currentAnswer,
-    required this.userLogged,
     required this.currentQuestionImage,
     required this.score,
     required this.isProcessing,
+    required this.error,
+    required this.currentIndex,
+    required this.currentLevel,
   });
 
-  static RootState get initialState => const RootState(
-        initialized: false,
-        currentUser: null,
-        userLogged: false,
+  static HomePageState get initialState => const HomePageState(
         currentQuestionImage: '',
         score: 0,
         isProcessing: false,
+        error: "",
+        currentLevel: 1,
+        currentIndex: 1,
       );
 
-  RootState clone({
-    bool? initialized,
-    UserModel? currentUser,
-    bool? userLogged,
+  HomePageState clone({
     String? currentQuestionImage,
+    String? error,
     int? currentAnswer,
     int? score,
     bool? isProcessing,
+    int? currentLevel,
+    int? currentIndex,
   }) {
-    return RootState(
-      initialized: initialized ?? this.initialized,
-      currentUser: currentUser ?? this.currentUser,
-      userLogged: userLogged ?? this.userLogged,
+    return HomePageState(
       currentQuestionImage: currentQuestionImage ?? this.currentQuestionImage,
       currentAnswer: currentAnswer ?? this.currentAnswer,
       score: score ?? this.score,
       isProcessing: isProcessing ?? this.isProcessing,
+      error: error ?? this.error,
+      currentIndex: currentIndex ?? this.currentIndex,
+      currentLevel: currentLevel ?? this.currentLevel,
     );
   }
 }

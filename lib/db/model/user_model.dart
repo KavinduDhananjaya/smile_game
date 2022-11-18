@@ -9,11 +9,17 @@ class UserModel extends DBModel {
   String? name;
   String? email;
   String? profileImage;
+  int difficulty;
+  int rank;
+  int score;
 
   UserModel({
     DocumentReference? ref,
     this.name,
     required this.email,
+    required this.difficulty,
+    required this.rank,
+    required this.score,
     this.profileImage,
   }) : super(ref: ref);
 
@@ -24,6 +30,9 @@ class UserModel extends DBModel {
       name: name,
       email: email,
       profileImage: profileImage,
+      difficulty: difficulty,
+      rank: rank,
+      score: score,
     );
   }
 }

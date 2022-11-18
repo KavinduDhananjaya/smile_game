@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../home_page/leaderboard_view.dart';
+import '../home_page/game_view/leaderboard_view.dart';
 
 class Leader extends StatelessWidget {
   const Leader({Key? key}) : super(key: key);

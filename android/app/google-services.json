@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "505247696143",
+    "project_id": "smilegame-3f9c5",
+    "storage_bucket": "smilegame-3f9c5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:505247696143:android:867d8ff71f9ac48148aa7a",
+        "android_client_info": {
+          "package_name": "com.sllit.smile_game"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "505247696143-ko95n94r99top7vjokremaoak903rd0h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZgPKhuRQP5bNjmXJ-wx8m73c7DIbdFw0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "505247696143-ko95n94r99top7vjokremaoak903rd0h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

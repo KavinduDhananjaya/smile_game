@@ -2,8 +2,7 @@ import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
-
-import '../widgets/reusable_widgets.dart';
+import 'package:smile_game/ui/widgets/reusable_widgets.dart';
 
 class GameCompleteView extends StatefulWidget {
   final int score;

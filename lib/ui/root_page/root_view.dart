@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smile_game/ui/root_page/root_cubit.dart';
-import 'package:smile_game/ui/util/routes.dart';
+import 'package:smile_game/util/routes.dart';
 
 
 class RootView extends StatelessWidget {

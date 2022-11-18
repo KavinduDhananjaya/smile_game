@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smile_game/theme/primary_theme.dart';
 import 'package:smile_game/theme/styled_colors.dart';
 import 'package:smile_game/ui/auth_page/login_page/login_view.dart';
-import 'package:smile_game/ui/util/routes.dart';
+import 'package:smile_game/ui/root_page/root_cubit.dart';
+import 'package:smile_game/ui/root_page/root_view.dart';
+import 'package:smile_game/util/routes.dart';
+
 
 
 class SmileGameAppView extends StatelessWidget {
@@ -12,7 +15,7 @@ class SmileGameAppView extends StatelessWidget {
       this.email,
       );
 
-  final String email;
+  final String? email;
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +25,15 @@ class SmileGameAppView extends StatelessWidget {
       title: "Smile Game",
       theme: PrimaryTheme.generateTheme(context),
       onGenerateRoute: Routes.generator,
-      home: LoginView(key: key),
-      // onGenerateRoute: Routes.generator,
+      home: RootView(email: email,),
     );
 
 
-    return materialApp;
-    // return MultiBlocProvider(
-    //   providers: <BlocProvider>[
-    //     BlocProvider<RootCubit>(create: (context) => RootCubit(context)),
-    //   ],
-    //   child: materialApp,
-    // );
+    return MultiBlocProvider(
+      providers: <BlocProvider>[
+        BlocProvider<RootCubit>(create: (context) => RootCubit(context)),
+      ],
+      child: materialApp,
+    );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
 
-import '../../theme/text_constants.dart';
+import '../../../theme/text_constants.dart';
 
 class LeaderboardView extends StatelessWidget {
   const LeaderboardView({Key? key}) : super(key: key);

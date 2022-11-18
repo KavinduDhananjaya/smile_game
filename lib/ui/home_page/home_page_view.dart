@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:smile_game/ui/home_page/select_difficulty_view.dart';
+import 'package:smile_game/ui/home_page/game_view/select_difficulty_view.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
 import 'package:smile_game/ui/widgets/leader.dart';
 import 'package:smile_game/ui/widgets/reusable_widgets.dart';
@@ -176,7 +176,7 @@ class HomePageView extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(PageTransition(
                         child: const SelectDifficultyView(),
-                        type: PageTransitionType.rightToLeftWithFade,
+                        type: PageTransitionType.bottomToTop,
                         duration: const Duration(milliseconds: 400),
                         reverseDuration: const Duration(milliseconds: 400)));
                   },
