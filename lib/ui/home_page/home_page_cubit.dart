@@ -18,7 +18,14 @@ import 'package:smile_game/ui/root_page/root_cubit.dart';
 class HomePageCubit extends Cubit<HomePageState> {
   HomePageCubit(BuildContext context)
       : rootCubit = BlocProvider.of(context),
-        super(HomePageState.initialState);
+        super(HomePageState.initialState) {
+
+    emit(state.clone(score: rootCubit.state.currentUser?.score));
+
+    rootCubit.stream.listen((event) {
+      emit(state.clone(score: event.currentUser?.score));
+    });
+  }
 
   final _userRepository = UserRepository();
 
@@ -48,14 +55,14 @@ class HomePageCubit extends Cubit<HomePageState> {
         await setAnswers(answer);
         await setQuestionImage(question);
         startTimer();
-        emit(state.clone(isProcessing: false,isClicked: false,isCorrect: -1));
+        emit(state.clone(isProcessing: false, isClicked: false, isCorrect: -1));
       } else {
-        emit(state.clone(isProcessing: false,isClicked: false,isCorrect: -1));
+        emit(state.clone(isProcessing: false, isClicked: false, isCorrect: -1));
         await setAnswers(0);
         await setQuestionImage('');
       }
     } catch (e) {
-      emit(state.clone(isProcessing: false,isClicked: false,isCorrect: -1));
+      emit(state.clone(isProcessing: false, isClicked: false, isCorrect: -1));
       await setAnswers(0);
       await setQuestionImage('');
 
@@ -102,23 +109,24 @@ class HomePageCubit extends Cubit<HomePageState> {
   }
 
   checkAnswer(int i) async {
-
-
     emit(state.clone(isClicked: true));
 
-    if(state.isCorrect==-1){
-      if(i==state.currentAnswer){
-        emit(state.clone(isCorrect:0));
+    if (state.isCorrect == -1) {
+      if (i == state.currentAnswer) {
+        emit(state.clone(isCorrect: 0));
 
-        // await this._userRepository.update(item: (_){
-        //   score:12
-        // },parent: rootCubit.state.currentUser?.ref);
-      }else{
-        emit(state.clone(isCorrect:1));
+        print(state.score);
+
+        await _userRepository.update(
+            item: rootCubit.state.currentUser!,
+            mapper: (_) => {'score': state.score + 10},
+            parent: rootCubit.state.currentUser?.ref);
+      } else {
+        emit(state.clone(isCorrect: 1));
+
+
       }
     }
-
-
   }
 
   void closeTimer() {

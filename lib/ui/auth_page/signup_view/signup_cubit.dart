@@ -26,7 +26,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   }
 
   Future<void> createUser(
-      String email, String password, String confirmPassword) async {
+      String email, String name, String confirmPassword) async {
     if (email.isEmpty) {
       errorEvent("Email can`t be Empty");
       emit(state.clone(processing: false));
@@ -48,23 +48,18 @@ class SignUpCubit extends Cubit<SignUpState> {
       return;
     }
 
-    if (password.length < 6 || password.isEmpty) {
+    if (confirmPassword.length < 6 || confirmPassword.isEmpty) {
       errorEvent("Password must have minimum 6 characters");
       emit(state.clone(processing: false));
       return;
     }
 
-    if (password != confirmPassword) {
-      errorEvent("Please Check the  Password Again...!");
-      emit(state.clone(processing: false));
-      return;
-    }
 
     try {
       final formatter = DateFormat('dd-MM-yyyy');
       String formattedDate = formatter.format(DateTime.now());
 
-      final register = await auth.register(email, password);
+      final register = await auth.register(email, confirmPassword);
 
       if (register!.isNotEmpty) {
         final user = UserModel(
@@ -72,6 +67,7 @@ class SignUpCubit extends Cubit<SignUpState> {
           score: 0,
           difficulty: -1,
           rank: -1,
+          name: name,
         );
 
         await userRepo.add(

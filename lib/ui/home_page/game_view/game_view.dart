@@ -293,7 +293,7 @@ class GameViewState extends State<GameView> {
   Future<void> _showMyDialog(bool val) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: true, // user must tap button!
+      barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: val

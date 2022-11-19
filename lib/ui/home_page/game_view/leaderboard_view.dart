@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smile_game/theme/styled_colors.dart';
+import 'package:smile_game/ui/root_page/root_cubit.dart';
+import 'package:smile_game/ui/root_page/root_state.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
 
 import '../../../theme/text_constants.dart';
@@ -19,6 +23,14 @@ class LeaderboardView extends StatelessWidget {
           'Leaderboard',
           style: TextConstants.leaderboardAppBarTextStyle(context),
         ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.clear,
+            color: Color(0xff595CFF),
+            size: 30,
+          ),
+          onPressed: () => {Navigator.pop(context)},
+        ),
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -28,39 +40,20 @@ class LeaderboardView extends StatelessWidget {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Column(
-          children: [
-            SizedBox(height: context.dynamicHeight(0.05)),
-            Expanded(
-              flex: 1,
-              child: Stack(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [FirstPlayer('names', 'scores', 'avatar')],
-                  ),
-                  Positioned(
-                    top: 100,
-                    left: .0,
-                    right: .0,
-                    child: Row(
-                      children: [
-                        const Spacer(),
-                        SecondPlayer('', 'scores', 'avatar'),
-                        const Spacer(
-                          flex: 2,
-                        ),
-                        ThirdPlayer('names', 'scores', 'avatar'),
-                        const Spacer(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView(
-                children: [
+        child: BlocBuilder<RootCubit, RootState>(
+            buildWhen: (pre, current) =>
+                pre.currentUser != current.currentUser ||
+                pre.rank != current.rank ||
+                pre.usersScores != current.usersScores,
+            builder: (context, state) {
+              final users = state.usersScores;
+
+              final children = <Widget>[];
+
+              for (int i = 0; i < users.length; i++) {
+                final user = users[i];
+
+                children.addAll([
                   Padding(
                     padding: const EdgeInsets.only(left: 20, right: 20),
                     child: Container(
@@ -82,7 +75,7 @@ class LeaderboardView extends StatelessWidget {
                         children: [
                           const Spacer(),
                           Text(
-                            '3',
+                            (i + 1).toString(),
                             style: TextConstants.leaderboardUserTextStyleGreen(
                                 context),
                           ),
@@ -100,19 +93,22 @@ class LeaderboardView extends StatelessWidget {
                           ),
                           const Spacer(),
                           Text(
-                            "User Name",
+                            user.name ?? 'user',
                             style: GoogleFonts.openSans(
-                                color: const Color(0xffE8E8E8),
-                                fontWeight: FontWeight.w700,
-                                fontSize: 20),
+                              color: const Color(0xffE8E8E8),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 20,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const Spacer(
                             flex: 5,
                           ),
-                          const Align(
+                          Align(
                             alignment: Alignment.centerRight,
-                            child: const Text(
-                              '#001',
+                            child: Text(
+                              user.score.toString(),
+                              style: TextStyle(fontSize: 20),
                             ),
                           ),
                           const Spacer(),
@@ -121,130 +117,47 @@ class LeaderboardView extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: context.dynamicHeight(0.02)),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.deepPurple,
-                              Colors.deepPurpleAccent,
-                            ],
-                            begin: FractionalOffset(0.0, 0.0),
-                            end: FractionalOffset(0.0, 1.0),
-                            stops: [0.0, 1.0],
-                            tileMode: TileMode.clamp,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                      width: context.contextWidth(),
-                      height: 68,
-                      child: Row(
-                        children: [
-                          const Spacer(),
-                          Text(
-                            '3',
-                            style: TextConstants.leaderboardUserTextStyleGreen(
-                                context),
-                          ),
-                          const Spacer(),
-                          CircleAvatar(
-                            radius: 26,
-                            backgroundColor: const Color(0xffA6BAFC),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              child: Image.asset(
-                                'assets/images/avatar.png',
-                              ),
-                              radius: 21,
-                            ),
-                          ),
-                          const Spacer(),
-                          Text(
-                            "User Name",
-                            style: GoogleFonts.openSans(
-                                color: const Color(0xffE8E8E8),
-                                fontWeight: FontWeight.w700,
-                                fontSize: 20),
-                          ),
-                          const Spacer(
-                            flex: 5,
-                          ),
-                          const Align(
-                            alignment: Alignment.centerRight,
-                            child: const Text(
-                              '#001',
-                            ),
-                          ),
-                          const Spacer(),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: context.dynamicHeight(0.02)),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.deepPurple,
-                              Colors.deepPurpleAccent,
-                            ],
-                            begin: FractionalOffset(0.0, 0.0),
-                            end: FractionalOffset(0.0, 1.0),
-                            stops: [0.0, 1.0],
-                            tileMode: TileMode.clamp,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                      width: context.contextWidth(),
-                      height: 68,
-                      child: Row(
-                        children: [
-                          const Spacer(),
-                          Text(
-                            '3',
-                            style: TextConstants.leaderboardUserTextStyleGreen(
-                                context),
-                          ),
-                          const Spacer(),
-                          CircleAvatar(
-                            radius: 26,
-                            backgroundColor: const Color(0xffA6BAFC),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              child: Image.asset(
-                                'assets/images/avatar.png',
-                              ),
-                              radius: 21,
-                            ),
-                          ),
-                          const Spacer(),
-                          Text(
-                            "User Name",
-                            style: GoogleFonts.openSans(
-                                color: const Color(0xffE8E8E8),
-                                fontWeight: FontWeight.w700,
-                                fontSize: 20),
-                          ),
-                          const Spacer(
-                            flex: 5,
-                          ),
-                          const Align(
-                            alignment: Alignment.centerRight,
-                            child: const Text(
-                              '#001',
-                            ),
-                          ),
-                          const Spacer(),
-                        ],
-                      ),
+                ]);
+              }
+
+              return Column(
+                children: [
+                  SizedBox(height: context.dynamicHeight(0.05)),
+                  // Expanded(
+                  //   flex: 1,
+                  //   child: Stack(
+                  //     children: [
+                  //       Row(
+                  //         mainAxisAlignment: MainAxisAlignment.center,
+                  //         children: [FirstPlayer('names', 'scores', 'avatar')],
+                  //       ),
+                  //       Positioned(
+                  //         top: 100,
+                  //         left: .0,
+                  //         right: .0,
+                  //         child: Row(
+                  //           children: [
+                  //             const Spacer(),
+                  //             SecondPlayer('', 'scores', 'avatar'),
+                  //             const Spacer(
+                  //               flex: 2,
+                  //             ),
+                  //             ThirdPlayer('names', 'scores', 'avatar'),
+                  //             const Spacer(),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                  Expanded(
+                    child: ListView(
+                      children: children,
                     ),
                   ),
                 ],
-              ),
-            ),
-          ],
-        ),
+              );
+            }),
       ),
     );
   }

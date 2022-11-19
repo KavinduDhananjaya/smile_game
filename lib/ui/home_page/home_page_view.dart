@@ -6,19 +6,20 @@ import 'package:page_transition/page_transition.dart';
 import 'package:smile_game/ui/home_page/game_view/select_difficulty_view.dart';
 import 'package:smile_game/ui/home_page/home_page_provider.dart';
 import 'package:smile_game/ui/root_page/root_cubit.dart';
+import 'package:smile_game/ui/root_page/root_state.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
 import 'package:smile_game/ui/widgets/leader.dart';
 import 'package:smile_game/ui/widgets/reusable_widgets.dart';
 import 'package:smile_game/util/routes.dart';
+
+import 'game_view/leaderboard_view.dart';
 
 class HomePageView extends StatelessWidget {
   const HomePageView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     final rootCubit = BlocProvider.of<RootCubit>(context);
-
 
     return Container(
       decoration: const BoxDecoration(
@@ -68,26 +69,56 @@ class HomePageView extends StatelessWidget {
                 ),
                 child: Text(
                   'Smile Game',
-                  style: TextStyle(color: Colors.white,fontSize: 34),
+                  style: TextStyle(color: Colors.white, fontSize: 34),
                 ),
               ),
               ListTile(
-                title: const Text('Item 1',style: TextStyle(color: Colors.white),),
+                leading: const Icon(
+                  Icons.person,
+                  size: 30,
+                  color: Colors.white,
+                ),
+                title: const Text(
+                  'Profile',
+                  style: TextStyle(color: Colors.white,fontSize: 20),
+                ),
                 onTap: () {
                   // Update the state of the app.
                   // ...
                 },
               ),
               ListTile(
-                title: const Text('Item 2',style: TextStyle(color: Colors.white),),
+                leading: const Icon(
+                  Icons.stacked_bar_chart,
+                  size: 30,
+                  color: Colors.white,
+                ),
+                title: const Text(
+                  'Leaderboard',
+                  style: TextStyle(color: Colors.white,fontSize: 20),
+                ),
                 onTap: () {
-                  // Update the state of the app.
-                  // ...
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return  const LeaderboardView();
+                      },
+                    ),
+                  );
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.exit_to_app,size: 30,color: Colors.redAccent,),
-                title: const Text('Logout',style: TextStyle(color: Colors.white),),
+                leading: const Icon(
+                  Icons.exit_to_app,
+                  size: 30,
+                  color: Colors.redAccent,
+                ),
+                title: const Text(
+                  'Logout',
+                  style: TextStyle(color: Colors.white,fontSize: 20),
+                ),
                 onTap: () {
                   rootCubit.handleUserLoggedOut();
                   Navigator.pushNamedAndRemoveUntil(
@@ -108,79 +139,85 @@ class HomePageView extends StatelessWidget {
               const Spacer(
                 flex: 3,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: context.dynamicWidth(0.4),
-                    height: context.dynamicHeight(0.15),
-                    child: Card(
-                      color: const Color(0xff14154F),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          side: const BorderSide(
-                              color: Color(0xffFF5ED2), width: 3)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "00",
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline5
-                                ?.copyWith(
-                                    color: const Color(0xffFF5ED2),
-                                    fontWeight: FontWeight.bold),
+              BlocBuilder<RootCubit, RootState>(
+                  buildWhen: (pre, current) =>
+                      pre.currentUser != current.currentUser ||
+                      pre.rank != current.rank,
+                  builder: (context, snapshot) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: context.dynamicWidth(0.4),
+                          height: context.dynamicHeight(0.15),
+                          child: Card(
+                            color: const Color(0xff14154F),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                                side: const BorderSide(
+                                    color: Color(0xffFF5ED2), width: 3)),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${snapshot.currentUser?.score ?? 0}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline5
+                                      ?.copyWith(
+                                          color: const Color(0xffFF5ED2),
+                                          fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "Marks",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline5
+                                      ?.copyWith(
+                                          color: const Color(0xffFF5ED2),
+                                          fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
-                          Text(
-                            "Marks",
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline5
-                                ?.copyWith(
-                                    color: const Color(0xffFF5ED2),
-                                    fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: context.dynamicWidth(0.4),
+                          height: context.dynamicHeight(0.15),
+                          child: Card(
+                            color: const Color(0xff14154F),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                                side: const BorderSide(
+                                    color: Color(0xff00B2FF), width: 3)),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${snapshot.rank==-1? '-': snapshot.rank}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline5
+                                      ?.copyWith(
+                                          color: const Color(0xff00B2FF),
+                                          fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "Rank",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline5
+                                      ?.copyWith(
+                                          color: const Color(0xff00B2FF),
+                                          fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: context.dynamicWidth(0.4),
-                    height: context.dynamicHeight(0.15),
-                    child: Card(
-                      color: const Color(0xff14154F),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          side: const BorderSide(
-                              color: Color(0xff00B2FF), width: 3)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "50",
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline5
-                                ?.copyWith(
-                                    color: const Color(0xff00B2FF),
-                                    fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "Rank",
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline5
-                                ?.copyWith(
-                                    color: const Color(0xff00B2FF),
-                                    fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                        ),
+                      ],
+                    );
+                  }),
               const Spacer(
                 flex: 3,
               ),
@@ -195,7 +232,7 @@ class HomePageView extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       PageTransition(
-                        child:  HomePageProvider(),
+                        child: HomePageProvider(),
                         type: PageTransitionType.bottomToTop,
                         duration: const Duration(milliseconds: 400),
                         reverseDuration: const Duration(milliseconds: 400),

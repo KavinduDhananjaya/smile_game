@@ -6,47 +6,48 @@ class RootState {
   final bool initialized;
   final UserModel? currentUser;
   final bool userLogged;
-  final String currentQuestionImage;
-  final int? currentAnswer;
   final int score;
   final bool isProcessing;
+  final int rank;
+  final List<UserModel> usersScores;
 
   const RootState({
     required this.initialized,
     this.currentUser,
-    this.currentAnswer,
     required this.userLogged,
-    required this.currentQuestionImage,
     required this.score,
     required this.isProcessing,
+    required this.usersScores,
+    required this.rank,
   });
 
   static RootState get initialState => const RootState(
         initialized: false,
         currentUser: null,
         userLogged: false,
-        currentQuestionImage: '',
         score: 0,
         isProcessing: false,
+        usersScores: [],
+        rank: -1,
       );
 
   RootState clone({
     bool? initialized,
     UserModel? currentUser,
     bool? userLogged,
-    String? currentQuestionImage,
-    int? currentAnswer,
     int? score,
     bool? isProcessing,
+    int? rank,
+    List<UserModel>? usersScores,
   }) {
     return RootState(
       initialized: initialized ?? this.initialized,
       currentUser: currentUser ?? this.currentUser,
       userLogged: userLogged ?? this.userLogged,
-      currentQuestionImage: currentQuestionImage ?? this.currentQuestionImage,
-      currentAnswer: currentAnswer ?? this.currentAnswer,
       score: score ?? this.score,
       isProcessing: isProcessing ?? this.isProcessing,
+      rank: rank ?? this.rank,
+      usersScores: usersScores ?? this.usersScores,
     );
   }
 }

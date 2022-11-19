@@ -28,7 +28,7 @@ class SignUpViewState extends State<SignUpView> {
     child: CircularProgressIndicator(),
   );
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
@@ -54,7 +54,7 @@ class SignUpViewState extends State<SignUpView> {
     _emailFocus.dispose();
     _emailController.dispose();
     _passwordFocus.dispose();
-    _passwordController.dispose();
+    _nameController.dispose();
     _confirmPasswordController.dispose();
     _confirmPasswordFocus.dispose();
     super.dispose();
@@ -72,10 +72,10 @@ class SignUpViewState extends State<SignUpView> {
     void _registerClicked() {
       ScaffoldMessenger.of(context).showSnackBar(AppSnackBar.loadingSnackBar);
       final email = (_emailController.text).trim();
-      final password = (_passwordController.text).trim();
-      final confirmPasswrd = (_confirmPasswordController.text).trim();
+      final name = (_nameController.text).trim();
+      final password = (_confirmPasswordController.text).trim();
 
-      signUpCubit.createUser(email, password, confirmPasswrd);
+      signUpCubit.createUser(email, name, password);
     }
 
     final scaffold= Scaffold(
@@ -124,22 +124,22 @@ class SignUpViewState extends State<SignUpView> {
                           hintText: "Your email",
                           prefixIcon: Padding(
                             padding: EdgeInsets.all(16),
-                            child: Icon(Icons.person),
+                            child: Icon(Icons.email),
                           ),
                         ),
                       ),
                       const SizedBox(height: 12,),
                       TextFormField(
-                        controller: _passwordController,
+                        controller: _nameController,
                         focusNode: _passwordFocus,
                         textInputAction: TextInputAction.next,
                         obscureText: true,
                         cursorColor: StyledColors.primaryColor,
                         decoration: const InputDecoration(
-                          hintText: "Your password",
+                          hintText: "Your Username",
                           prefixIcon: Padding(
                             padding: EdgeInsets.all(16),
-                            child: Icon(Icons.lock),
+                            child: Icon(Icons.person),
                           ),
                         ),
                       ),
@@ -151,7 +151,7 @@ class SignUpViewState extends State<SignUpView> {
                         obscureText: true,
                         cursorColor: StyledColors.primaryColor,
                         decoration: const InputDecoration(
-                          hintText: "Confirm password",
+                          hintText: "Password",
                           prefixIcon: Padding(
                             padding: EdgeInsets.all(16),
                             child: Icon(Icons.lock),
