@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:smile_game/ui/home_page/game_view/game_view.dart';
 import 'package:smile_game/ui/home_page/game_view/select_difficulty_view.dart';
+import 'package:smile_game/ui/home_page/home_page_cubit.dart';
 import 'package:smile_game/ui/home_page/home_page_provider.dart';
 import 'package:smile_game/ui/root_page/root_cubit.dart';
 import 'package:smile_game/ui/root_page/root_state.dart';
@@ -80,7 +82,7 @@ class HomePageView extends StatelessWidget {
                 ),
                 title: const Text(
                   'Profile',
-                  style: TextStyle(color: Colors.white,fontSize: 20),
+                  style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 onTap: () {
                   // Update the state of the app.
@@ -95,7 +97,7 @@ class HomePageView extends StatelessWidget {
                 ),
                 title: const Text(
                   'Leaderboard',
-                  style: TextStyle(color: Colors.white,fontSize: 20),
+                  style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 onTap: () {
                   Navigator.pop(context);
@@ -103,7 +105,7 @@ class HomePageView extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return  const LeaderboardView();
+                        return const LeaderboardView();
                       },
                     ),
                   );
@@ -117,7 +119,7 @@ class HomePageView extends StatelessWidget {
                 ),
                 title: const Text(
                   'Logout',
-                  style: TextStyle(color: Colors.white,fontSize: 20),
+                  style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 onTap: () {
                   rootCubit.handleUserLoggedOut();
@@ -194,7 +196,7 @@ class HomePageView extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  '${snapshot.rank==-1? '-': snapshot.rank}',
+                                  '${snapshot.rank == -1 ? '-' : snapshot.rank}',
                                   style: Theme.of(context)
                                       .textTheme
                                       .headline5
@@ -225,34 +227,54 @@ class HomePageView extends StatelessWidget {
               const Spacer(
                 flex: 4,
               ),
-              SizedBox(
-                height: context.dynamicHeight(0.09),
-                width: context.dynamicWidth(0.8),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      PageTransition(
-                        child: HomePageProvider(),
-                        type: PageTransitionType.bottomToTop,
-                        duration: const Duration(milliseconds: 400),
-                        reverseDuration: const Duration(milliseconds: 400),
+              BlocBuilder<RootCubit, RootState>(
+                  buildWhen: (pre, current) =>
+                      pre.currentUser != current.currentUser,
+                  builder: (context, state) {
+                    return SizedBox(
+                      height: context.dynamicHeight(0.09),
+                      width: context.dynamicWidth(0.8),
+                      child: InkWell(
+                        onTap: () {
+                          if (state.currentUser?.difficulty == -1) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomePageProvider(),
+                              ),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    BlocProvider<HomePageCubit>(
+                                  create: (context) => HomePageCubit(context),
+                                  child: const GameView(),
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Card(
+                          color: const Color(0xff26CE55),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Center(
+                            child: Text(
+                              "Play",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline5
+                                  ?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
                       ),
                     );
-                  },
-                  child: Card(
-                    color: const Color(0xff26CE55),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Center(
-                      child: Text(
-                        "Play",
-                        style: Theme.of(context).textTheme.headline5?.copyWith(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+                  }),
             ],
           ),
         ),

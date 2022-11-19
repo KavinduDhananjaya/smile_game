@@ -21,7 +21,7 @@ class HomePageCubit extends Cubit<HomePageState> {
         super(HomePageState.initialState) {
 
     emit(state.clone(score: rootCubit.state.currentUser?.score));
-
+    getQuestionData(true);
     rootCubit.stream.listen((event) {
       emit(state.clone(score: event.currentUser?.score));
     });
@@ -32,13 +32,19 @@ class HomePageCubit extends Cubit<HomePageState> {
   late Timer _timer;
   final RootCubit rootCubit;
 
-  setDifficulty(int diff) {
+  setDifficulty(int diff) async {
     if (diff > -1) {
       emit(state.clone(difficulty: diff));
+
+      await _userRepository.update(
+          item: rootCubit.state.currentUser!,
+          mapper: (_) => {'difficulty': diff},
+          parent: rootCubit.state.currentUser?.ref);
+
     }
   }
 
-  getQuestionData() async {
+  getQuestionData(bool isStart) async {
     try {
       emit(state.clone(isProcessing: true));
       final url =
@@ -54,8 +60,10 @@ class HomePageCubit extends Cubit<HomePageState> {
 
         await setAnswers(answer);
         await setQuestionImage(question);
-        startTimer();
+
         emit(state.clone(isProcessing: false, isClicked: false, isCorrect: -1));
+        startTimer();
+
       } else {
         emit(state.clone(isProcessing: false, isClicked: false, isCorrect: -1));
         await setAnswers(0);
@@ -66,7 +74,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       await setAnswers(0);
       await setQuestionImage('');
 
-      getQuestionData();
+      getQuestionData(false);
     }
   }
 
@@ -109,13 +117,12 @@ class HomePageCubit extends Cubit<HomePageState> {
   }
 
   checkAnswer(int i) async {
+    _timer.cancel();
     emit(state.clone(isClicked: true));
 
     if (state.isCorrect == -1) {
       if (i == state.currentAnswer) {
         emit(state.clone(isCorrect: 0));
-
-        print(state.score);
 
         await _userRepository.update(
             item: rootCubit.state.currentUser!,

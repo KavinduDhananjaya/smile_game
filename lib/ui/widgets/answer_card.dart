@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:smile_game/theme/styled_colors.dart';
 
 enum AnswerCardStatus {
   normal,
@@ -60,38 +60,48 @@ IconData adaptiveIcon(AnswerCardStatus answerCardStatus) {
   }
 }
 
-
-
 class AnswerCard extends ConsumerWidget {
   const AnswerCard({
     required this.answer,
     required this.onTap,
     required this.correctAnswer,
+    this.isClicked = false,
     // required this.clickedAnswer,
   });
 
   final int answer;
   final int correctAnswer;
   final VoidCallback? onTap;
+  final bool isClicked;
+
   // final int clickedAnswer;
 
   @override
   Widget build(BuildContext context, ref) {
-
-    AnswerCardStatus answerCardStatus=AnswerCardStatus.normal;
-
+    AnswerCardStatus answerCardStatus = AnswerCardStatus.normal;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
-        onTap: onTap,
+        onTap: !isClicked ? onTap : null,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 100),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
           decoration: BoxDecoration(
-            color: bgColor(answerCardStatus),
+            // color: isClicked ? Colors.grey : bgColor(answerCardStatus),
+            color: isClicked
+                ? answer == correctAnswer
+                    ? Colors.green
+                    : Colors.grey
+                : StyledColors.primaryColor,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: borderColor(answerCardStatus), width: 3),
+            border: Border.all(
+                color: isClicked
+                    ? answer == correctAnswer
+                        ? Colors.green
+                        : borderColor(answerCardStatus)
+                    : Colors.white,
+                width: 3),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -100,7 +110,7 @@ class AnswerCard extends ConsumerWidget {
                 child: Center(
                   child: Text(
                     answer.toString(),
-                    style: TextStyle(color: textColor(answerCardStatus),fontSize: 23),
+                    style: const TextStyle(color: Colors.white, fontSize: 23),
                   ),
                 ),
               ),

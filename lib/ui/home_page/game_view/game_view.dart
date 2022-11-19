@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
@@ -55,10 +56,16 @@ class GameViewState extends State<GameView> {
                   pre.isProcessing != current.isProcessing,
               builder: (context, state) {
                 if (state.isProcessing) {
+
+                  final spinkit = SpinKitCircle(
+                    color: Colors.white,
+                    size: 70.0,
+                  );
+
                   return Column(
-                    children: const [
+                    children:  [
                       Spacer(),
-                      CircularProgressIndicator(),
+                      spinkit,
                       Spacer(),
                     ],
                   );
@@ -154,10 +161,28 @@ class GameViewState extends State<GameView> {
 
                           answers.add(correct);
                           var rng = Random();
-                          final l =
-                              List.generate(3, (_) => rng.nextInt(10)).toList();
 
-                          answers.addAll([...l]);
+                          final range = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+
+                          if (range.contains(correct)) {
+                            int randomNumber = rng.nextInt(10);
+                            range.remove(correct);
+                            range.add(randomNumber);
+                            if (range.contains(correct)) {
+                              int randomNumber = rng.nextInt(10);
+                              range.remove(correct);
+                              range.add(randomNumber);
+                            }
+                          }
+
+                          range.shuffle();
+
+                          int num1 = range[0];
+                          int num2 = range[4];
+                          int num3 = range[7];
+
+                          answers.addAll([num1, num2, num3]);
 
                           answers.shuffle();
 
@@ -165,83 +190,102 @@ class GameViewState extends State<GameView> {
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
+                              child: BlocBuilder<HomePageCubit, HomePageState>(
+                                  buildWhen: (pre, current) =>
+                                      pre.isClicked != current.isClicked,
+                                  builder: (context, snapshot) {
+                                    return Row(
                                       children: [
-                                        AnswerCard(
-                                          answer: answers[0],
-                                          correctAnswer: st.currentAnswer,
-                                          onTap: () {
-                                            gameCubit.checkAnswer(answers[0]);
-                                          },
+                                        Expanded(
+                                          child: Column(
+                                            children: [
+                                              AnswerCard(
+                                                answer: answers[0],
+                                                correctAnswer: st.currentAnswer,
+                                                onTap: () {
+                                                  gameCubit
+                                                      .checkAnswer(answers[0]);
+                                                },
+                                                isClicked: snapshot.isClicked,
+                                              ),
+                                              AnswerCard(
+                                                answer: answers[1],
+                                                correctAnswer: st.currentAnswer,
+                                                onTap: () {
+                                                  gameCubit
+                                                      .checkAnswer(answers[1]);
+                                                },
+                                                isClicked: snapshot.isClicked,
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        AnswerCard(
-                                          answer: answers[1],
-                                          correctAnswer: st.currentAnswer,
-                                          onTap: () {
-                                            gameCubit.checkAnswer(answers[1]);
-                                          },
-                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            children: [
+                                              AnswerCard(
+                                                answer: answers[2],
+                                                correctAnswer: st.currentAnswer,
+                                                onTap: () {
+                                                  gameCubit
+                                                      .checkAnswer(answers[2]);
+                                                },
+                                                isClicked: snapshot.isClicked,
+                                              ),
+                                              AnswerCard(
+                                                answer: answers[3],
+                                                correctAnswer: st.currentAnswer,
+                                                onTap: () {
+                                                  gameCubit
+                                                      .checkAnswer(answers[3]);
+                                                },
+                                                isClicked: snapshot.isClicked,
+                                              ),
+                                            ],
+                                          ),
+                                        )
                                       ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      children: [
-                                        AnswerCard(
-                                          answer: answers[2],
-                                          correctAnswer: st.currentAnswer,
-                                          onTap: () {
-                                            gameCubit.checkAnswer(answers[2]);
-                                          },
-                                        ),
-                                        AnswerCard(
-                                          answer: answers[3],
-                                          correctAnswer: st.currentAnswer,
-                                          onTap: () {
-                                            gameCubit.checkAnswer(answers[3]);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
+                                    );
+                                  }),
                             ),
                           );
                         }),
 
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: context.dynamicWidth(0.1),
-                          vertical: context.dynamicHeight(0.04)),
-                      child: SizedBox(
-                        height: context.dynamicHeight(0.08),
-                        width: context.dynamicWidth(0.8),
-                        child: InkWell(
-                          onTap: () {
-                            gameCubit.getQuestionData();
-                          },
-                          child: Card(
-                            color: Colors.deepPurpleAccent,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Center(
-                              child: Text(
-                                "Next Quiz",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline5
-                                    ?.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
+                    BlocBuilder<HomePageCubit, HomePageState>(
+                        buildWhen: (pre, current) =>
+                        pre.isClicked != current.isClicked,
+                      builder: (context, snapshot) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: context.dynamicWidth(0.1),
+                              vertical: context.dynamicHeight(0.04)),
+                          child: SizedBox(
+                            height: context.dynamicHeight(0.08),
+                            width: context.dynamicWidth(0.8),
+                            child: InkWell(
+                              onTap: () {
+                                snapshot.isClicked?gameCubit.getQuestionData(false):null;
+                              },
+                              child: Card(
+                                color:  !snapshot.isClicked?Colors.deepPurpleAccent.withOpacity(0.3):Colors.deepPurpleAccent,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15)),
+                                child: Center(
+                                  child: Text(
+                                    "Next Quiz",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline5
+                                        ?.copyWith(
+                                            color:snapshot.isClicked? Colors.white:Colors.white.withOpacity(0.1),
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      }
                     ),
                   ],
                 );
@@ -271,7 +315,7 @@ class GameViewState extends State<GameView> {
           if (state.isClicked && state.isCorrect == 0) {
             _showMyDialog(true);
             await Future.delayed(
-              const Duration(seconds: 4),
+              const Duration(seconds: 2),
               () {
                 Navigator.pop(context);
               },
@@ -279,7 +323,7 @@ class GameViewState extends State<GameView> {
           } else if (state.isClicked && state.isCorrect == 1) {
             _showMyDialog(false);
             await Future.delayed(
-              const Duration(seconds: 4),
+              const Duration(seconds: 2),
               () {
                 Navigator.pop(context);
               },
