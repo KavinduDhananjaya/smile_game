@@ -1,10 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:smile_game/ui/home_page/home_page_cubit.dart';
+import 'package:smile_game/ui/home_page/home_page_state.dart';
+import 'package:smile_game/ui/root_page/root_cubit.dart';
 import 'package:smile_game/ui/widgets/answer_card.dart';
+import 'package:smile_game/ui/widgets/common_snack_bar.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
 import 'package:smile_game/ui/widgets/custom_timer.dart';
 
@@ -12,156 +19,314 @@ import '../../../theme/text_constants.dart';
 import '../../widgets/decoration.dart';
 import '../../widgets/reusable_widgets.dart';
 
-
 class GameView extends StatefulWidget {
-  final String quizTitle;
-  final String quizId;
-  final bool isSolved;
-  final String quizCategory;
-  final int iconListener;
-
-  const GameView({
-    Key? key,
-    required this.quizTitle,
-    required this.quizId,
-    required this.isSolved,
-    required this.quizCategory,
-    required this.iconListener,
-  }) : super(key: key);
+  const GameView({Key? key}) : super(key: key);
 
   @override
-  State<GameView> createState() => _GameViewState();
+  State<StatefulWidget> createState() => GameViewState();
 }
 
-class _GameViewState extends State<GameView> {
+class GameViewState extends State<GameView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xff1F1147), Color(0xff362679)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+    final rootCubit = BlocProvider.of<RootCubit>(context);
+    final gameCubit = BlocProvider.of<HomePageCubit>(context);
+
+    final scaffold = WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xff1F1147), Color(0xff362679)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
-        ),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: context.dynamicHeight(0.07)),
-              child: const Text(
-                'Level 1',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.white, fontSize: 25, letterSpacing: 1),
-              ),
-            ),
-            SizedBox(
-              height: context.dynamicHeight(0.04),
-            ),
-            LinearPercentIndicator(
-              animation: true,
-              lineHeight: 25.0,
-              barRadius: Radius.circular(12),
-              animationDuration: 2500,
-              percent: 1,
-              center: Text("80 Seconds"),
-              linearStrokeCap: LinearStrokeCap.roundAll,
-              progressColor: Colors.white,
-            ),
-            // SizedBox(
-            //   height: context.dynamicHeight(0.01),
-            // ),
-            // Container(
-            //   padding: const EdgeInsets.symmetric(horizontal: 16),
-            //   width: double.infinity,
-            //   child: const Text(
-            //     'Question ${ 1}/7',
-            //     textAlign: TextAlign.start,
-            //     style: TextStyle(fontSize: 25,color: Colors.white),
-            //   ),
-            // ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: EdgeInsets.only(top: context.dynamicHeight(0.03)),
-                child: ReusableWidgets.getImageAsset("og-img.png"),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
+          child: BlocBuilder<HomePageCubit, HomePageState>(
+              buildWhen: (pre, current) =>
+                  pre.currentLevel != current.currentLevel ||
+                  pre.currentIndex != current.currentIndex ||
+                  pre.isProcessing != current.isProcessing ||
+                  pre.currentQuestionImage != current.currentQuestionImage ||
+                  pre.currentAnswer != current.currentAnswer ||
+                  pre.isProcessing != current.isProcessing,
+              builder: (context, state) {
+                if (state.isProcessing) {
+                  return Column(
+                    children: const [
+                      Spacer(),
+                      CircularProgressIndicator(),
+                      Spacer(),
+                    ],
+                  );
+                }
+                return Column(
                   children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    top: context.dynamicHeight(0.056)),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.clear,
+                                    color: Colors.white,
+                                    size: 30,
+                                  ),
+                                  onPressed: () => {
+                                    gameCubit.closeTimer(),
+                                    Navigator.pop(context)
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                top: context.dynamicHeight(0.07)),
+                            child: Text(
+                              'Level ${state.currentLevel}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 25,
+                                  letterSpacing: 1),
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Container())
+                      ],
+                    ),
+                    SizedBox(
+                      height: context.dynamicHeight(0.02),
+                    ),
+                    BlocBuilder<HomePageCubit, HomePageState>(
+                        buildWhen: (pre, current) =>
+                            pre.initialTime != current.initialTime ||
+                            pre.time != current.time,
+                        builder: (context, snapshot) {
+                          return Center(
+                            child: Text(
+                              '${snapshot.time.toInt()}  Seconds',
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 23),
+                            ),
+                          );
+                        }),
+                    // SizedBox(
+                    //   height: context.dynamicHeight(0.01),
+                    // ),
+                    // Container(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                    //   width: double.infinity,
+                    //   child: const Text(
+                    //     'Question ${ 1}/7',
+                    //     textAlign: TextAlign.start,
+                    //     style: TextStyle(fontSize: 25,color: Colors.white),
+                    //   ),
+                    // ),
                     Expanded(
-                      child: Column(
-                        children: [
-                          AnswerCard(
-                              answer: 'a',
-                              answerCardStatus: AnswerCardStatus.right,
-                              onTap: () {
-                                print("DDDDDDDDDDDDDDDD");
-                              }),
-                          AnswerCard(
-                              answer: 'a',
-                              answerCardStatus: AnswerCardStatus.normal,
-                              onTap: () {}),
-                        ],
+                      flex: 2,
+                      child: Padding(
+                        padding:
+                            EdgeInsets.only(top: context.dynamicHeight(0.03)),
+                        child: state.currentQuestionImage == ''
+                            ? ReusableWidgets.getImageAsset("og-img.png")
+                            : Image.network(state.currentQuestionImage),
                       ),
                     ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          AnswerCard(
-                              answer: 'a',
-                              answerCardStatus: AnswerCardStatus.error,
-                              onTap: () {}),
-                          AnswerCard(
-                              answer: 'a',
-                              answerCardStatus: AnswerCardStatus.normal,
-                              onTap: () {}),
-                        ],
+                    BlocBuilder<HomePageCubit, HomePageState>(
+                        buildWhen: (pre, current) =>
+                            pre.currentQuestionImage !=
+                                current.currentQuestionImage ||
+                            pre.currentAnswer != current.currentAnswer,
+                        builder: (context, st) {
+                          final answers = [];
+                          final correct = st.currentAnswer;
+
+                          answers.add(correct);
+                          var rng = Random();
+                          final l =
+                              List.generate(3, (_) => rng.nextInt(10)).toList();
+
+                          answers.addAll([...l]);
+
+                          answers.shuffle();
+
+                          return Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        AnswerCard(
+                                          answer: answers[0],
+                                          correctAnswer: st.currentAnswer,
+                                          onTap: () {
+                                            gameCubit.checkAnswer(answers[0]);
+                                          },
+                                        ),
+                                        AnswerCard(
+                                          answer: answers[1],
+                                          correctAnswer: st.currentAnswer,
+                                          onTap: () {
+                                            gameCubit.checkAnswer(answers[1]);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        AnswerCard(
+                                          answer: answers[2],
+                                          correctAnswer: st.currentAnswer,
+                                          onTap: () {
+                                            gameCubit.checkAnswer(answers[2]);
+                                          },
+                                        ),
+                                        AnswerCard(
+                                          answer: answers[3],
+                                          correctAnswer: st.currentAnswer,
+                                          onTap: () {
+                                            gameCubit.checkAnswer(answers[3]);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: context.dynamicWidth(0.1),
+                          vertical: context.dynamicHeight(0.04)),
+                      child: SizedBox(
+                        height: context.dynamicHeight(0.08),
+                        width: context.dynamicWidth(0.8),
+                        child: InkWell(
+                          onTap: () {
+                            gameCubit.getQuestionData();
+                          },
+                          child: Card(
+                            color: Colors.deepPurpleAccent,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Center(
+                              child: Text(
+                                "Next Quiz",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline5
+                                    ?.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                    )
+                    ),
                   ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: context.dynamicWidth(0.1),
-                  vertical: context.dynamicHeight(0.04)),
-              child: SizedBox(
-                height: context.dynamicHeight(0.08),
-                width: context.dynamicWidth(0.8),
-                child: InkWell(
-                  onTap: () {},
-                  child: Card(
-                    color: Colors.deepPurpleAccent,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Center(
-                      child: Text(
-                        "Next Quiz",
-                        style: Theme.of(context).textTheme.headline5?.copyWith(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+                );
+              }),
         ),
       ),
+    );
+
+    return MultiBlocListener(listeners: [
+      BlocListener<HomePageCubit, HomePageState>(
+        listenWhen: (pre, current) => pre.error != current.error,
+        listener: (context, state) {
+          if (state.error.isNotEmpty) {
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            ScaffoldMessenger.of(context)
+                .showSnackBar(AppSnackBar.showErrorSnackBar(state.error));
+          } else {
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
+          }
+        },
+      ),
+      BlocListener<HomePageCubit, HomePageState>(
+        listenWhen: (pre, current) =>
+            pre.isClicked != current.isClicked ||
+            pre.isCorrect != current.isCorrect,
+        listener: (context, state) async {
+          if (state.isClicked && state.isCorrect == 0) {
+            _showMyDialog(true);
+            await Future.delayed(
+              const Duration(seconds: 4),
+              () {
+                Navigator.pop(context);
+              },
+            );
+          } else if (state.isClicked && state.isCorrect == 1) {
+            _showMyDialog(false);
+            await Future.delayed(
+              const Duration(seconds: 4),
+              () {
+                Navigator.pop(context);
+              },
+            );
+          }
+        },
+      ),
+    ], child: scaffold);
+  }
+
+  Future<void> _showMyDialog(bool val) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: val
+              ? Colors.greenAccent.withOpacity(0.8)
+              : Colors.redAccent.withOpacity(0.8),
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: val ? Colors.green : Colors.red, width: 2),
+          ),
+          child: SizedBox(
+            width: 100,
+            height: 200,
+            child: val
+                ? const Icon(
+                    Icons.check,
+                    size: 60,
+                    color: Colors.white,
+                  )
+                : const Icon(
+                    Icons.close,
+                    size: 60,
+                    color: Colors.white,
+                  ),
+          ),
+        );
+      },
     );
   }
 
   void showAlertDialog(BuildContext context) {
     Widget cancelButton = TextButton(
-      child: Text(
+      child: const Text(
         "Testten çık",
         style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
       ),
@@ -171,9 +336,9 @@ class _GameViewState extends State<GameView> {
       },
     );
     Widget continueButton = TextButton(
-      child: Text("Devam et",
-          style:
-              TextStyle(color: Color(0xff26CE55), fontWeight: FontWeight.bold)),
+      child: const Text("Devam et",
+          style: const TextStyle(
+              color: const Color(0xff26CE55), fontWeight: FontWeight.bold)),
       onPressed: () {
         Navigator.of(context, rootNavigator: true).pop('dialog');
       },
@@ -181,12 +346,12 @@ class _GameViewState extends State<GameView> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      backgroundColor: Color(0xff14154F),
-      title: Text(
+      backgroundColor: const Color(0xff14154F),
+      title: const Text(
         "Uyarı!",
         style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
       ),
-      content: Text(
+      content: const Text(
           "Testten çıkarsanız bir daha bu testten puan kazanamayacaksınız!!",
           style: TextStyle(color: Colors.white)),
       actions: [

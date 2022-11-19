@@ -1,24 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:smile_game/db/model/user_model.dart';
 
 @immutable
 class HomePageState {
-  final String? currentQuestionImage;
-  final int? currentAnswer;
+  final String currentQuestionImage;
+  final int currentAnswer;
   final int score;
   final bool isProcessing;
   final String error;
   final int currentLevel;
   final int currentIndex;
+  final int difficulty;
+  final double time;
+  final int initialTime;
+  final bool isClicked;
+  final int isCorrect;
 
   const HomePageState({
-    this.currentAnswer,
+    required this.currentAnswer,
     required this.currentQuestionImage,
     required this.score,
     required this.isProcessing,
     required this.error,
     required this.currentIndex,
     required this.currentLevel,
+    required this.difficulty,
+    required this.time,
+    required this.initialTime,
+    required this.isClicked,
+    required this.isCorrect,
   });
 
   static HomePageState get initialState => const HomePageState(
@@ -28,6 +37,12 @@ class HomePageState {
         error: "",
         currentLevel: 1,
         currentIndex: 1,
+        difficulty: 0,
+        time: 1,
+        initialTime: 30,
+        currentAnswer: -1,
+        isClicked: false,
+        isCorrect: -1,
       );
 
   HomePageState clone({
@@ -38,6 +53,11 @@ class HomePageState {
     bool? isProcessing,
     int? currentLevel,
     int? currentIndex,
+    int? difficulty,
+    double? time,
+    int? initialTime,
+    bool? isClicked,
+    int? isCorrect,
   }) {
     return HomePageState(
       currentQuestionImage: currentQuestionImage ?? this.currentQuestionImage,
@@ -47,6 +67,11 @@ class HomePageState {
       error: error ?? this.error,
       currentIndex: currentIndex ?? this.currentIndex,
       currentLevel: currentLevel ?? this.currentLevel,
+      difficulty: difficulty ?? this.difficulty,
+      time: time ?? this.time,
+      initialTime: initialTime ?? this.initialTime,
+      isClicked: isClicked ?? this.isClicked,
+      isCorrect: isCorrect ?? this.isCorrect,
     );
   }
 }

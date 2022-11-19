@@ -1,8 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:smile_game/ui/home_page/game_view/game_complete_view.dart';
+import 'package:smile_game/ui/home_page/home_page_cubit.dart';
+import 'package:smile_game/ui/home_page/home_page_provider.dart';
+import 'package:smile_game/ui/root_page/root_cubit.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
 
 import 'game_view.dart';
@@ -14,6 +18,9 @@ class SelectDifficultyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rootCubit = BlocProvider.of<RootCubit>(context);
+    final gameCubit = BlocProvider.of<HomePageCubit>(context);
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -50,33 +57,23 @@ class SelectDifficultyView extends StatelessWidget {
             ),
             CarouselSlider(
                 options: CarouselOptions(
-                  autoPlay: true,
-                  autoPlayInterval: const Duration(seconds: 5),
+                  autoPlay: false,
+                  autoPlayInterval: const Duration(seconds: 10),
                   height: 350,
                   enlargeCenterPage: true,
                   padEnds: true,
                   viewportFraction: .6,
+                  onPageChanged: (index,reason){
+                    gameCubit.setDifficulty(index);
+                  }
                 ),
                 items: [
                   Padding(
                     padding: const EdgeInsets.only(top: 25),
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return GameView(
-                                  quizTitle: "Level One",
-                                  quizId: '1',
-                                  isSolved: false,
-                                  quizCategory: 'quizCategory',
-                                  iconListener: 1);
-                            },
-                          ),
-                        );
                       },
-                      child: CustomStack(
+                      child: const CustomStack(
                         image: 'assets/images/quiz_background.png',
                         text1: 'Easy',
                         padding_left: 5,
@@ -138,16 +135,14 @@ class SelectDifficultyView extends StatelessWidget {
                 width: context.dynamicWidth(0.8),
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).push(PageTransition(
-                        child: const GameView(
-                            quizTitle: '',
-                            quizId: '',
-                            isSolved: true,
-                            quizCategory: 'cat',
-                            iconListener: 1),
-                        type: PageTransitionType.bottomToTop,
-                        duration: const Duration(milliseconds: 500),
-                        reverseDuration: const Duration(milliseconds: 400)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>BlocProvider.value(
+                        value: gameCubit, child: const GameView())));
+                    // Navigator.of(context).push(PageTransition(
+                    //     child: BlocProvider.value(
+                    //         value: gameCubit, child: const GameView()),
+                    //     type: PageTransitionType.bottomToTop,
+                    //     duration: const Duration(milliseconds: 500),
+                    //     reverseDuration: const Duration(milliseconds: 400)));
                   },
                   child: Card(
                     color: Colors.deepPurpleAccent,

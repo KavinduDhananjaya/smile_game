@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:smile_game/ui/home_page/game_view/select_difficulty_view.dart';
+import 'package:smile_game/ui/home_page/home_page_provider.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
 import 'package:smile_game/ui/widgets/leader.dart';
 import 'package:smile_game/ui/widgets/reusable_widgets.dart';
@@ -40,7 +41,7 @@ class HomePageView extends StatelessWidget {
             ),
           ],
         ),
-        drawer:Drawer(
+        drawer: Drawer(
           elevation: 10,
           backgroundColor: Color(0xff1F1147),
           // Add a ListView to the drawer. This ensures the user can scroll
@@ -58,7 +59,10 @@ class HomePageView extends StatelessWidget {
                     end: Alignment.bottomCenter,
                   ),
                 ),
-                child: Text('Smile Game',style: TextStyle(color: Colors.white),),
+                child: Text(
+                  'Smile Game',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
               ListTile(
                 title: const Text('Item 1'),
@@ -76,7 +80,7 @@ class HomePageView extends StatelessWidget {
               ),
             ],
           ),
-        ) ,
+        ),
         body: Padding(
           padding: EdgeInsets.symmetric(
               vertical: context.dynamicHeight(0.1),
@@ -84,7 +88,6 @@ class HomePageView extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
               LogoImage(),
               const Spacer(
                 flex: 3,
@@ -110,8 +113,8 @@ class HomePageView extends StatelessWidget {
                                 .textTheme
                                 .headline5
                                 ?.copyWith(
-                                color: const Color(0xffFF5ED2),
-                                fontWeight: FontWeight.bold),
+                                    color: const Color(0xffFF5ED2),
+                                    fontWeight: FontWeight.bold),
                           ),
                           Text(
                             "Marks",
@@ -119,8 +122,8 @@ class HomePageView extends StatelessWidget {
                                 .textTheme
                                 .headline5
                                 ?.copyWith(
-                                color: const Color(0xffFF5ED2),
-                                fontWeight: FontWeight.bold),
+                                    color: const Color(0xffFF5ED2),
+                                    fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -144,8 +147,8 @@ class HomePageView extends StatelessWidget {
                                 .textTheme
                                 .headline5
                                 ?.copyWith(
-                                color: const Color(0xff00B2FF),
-                                fontWeight: FontWeight.bold),
+                                    color: const Color(0xff00B2FF),
+                                    fontWeight: FontWeight.bold),
                           ),
                           Text(
                             "Rank",
@@ -153,8 +156,8 @@ class HomePageView extends StatelessWidget {
                                 .textTheme
                                 .headline5
                                 ?.copyWith(
-                                color: const Color(0xff00B2FF),
-                                fontWeight: FontWeight.bold),
+                                    color: const Color(0xff00B2FF),
+                                    fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -167,18 +170,21 @@ class HomePageView extends StatelessWidget {
               ),
               const Leader(),
               const Spacer(
-                flex:4,
+                flex: 4,
               ),
               SizedBox(
                 height: context.dynamicHeight(0.09),
                 width: context.dynamicWidth(0.8),
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).push(PageTransition(
-                        child: const SelectDifficultyView(),
+                    Navigator.of(context).push(
+                      PageTransition(
+                        child:  HomePageProvider(),
                         type: PageTransitionType.bottomToTop,
                         duration: const Duration(milliseconds: 400),
-                        reverseDuration: const Duration(milliseconds: 400)));
+                        reverseDuration: const Duration(milliseconds: 400),
+                      ),
+                    );
                   },
                   child: Card(
                     color: const Color(0xff26CE55),
@@ -194,7 +200,6 @@ class HomePageView extends StatelessWidget {
                   ),
                 ),
               ),
-
             ],
           ),
         ),

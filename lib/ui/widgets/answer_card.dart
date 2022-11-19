@@ -60,19 +60,26 @@ IconData adaptiveIcon(AnswerCardStatus answerCardStatus) {
   }
 }
 
+
+
 class AnswerCard extends ConsumerWidget {
   const AnswerCard({
     required this.answer,
-    required this.answerCardStatus,
     required this.onTap,
+    required this.correctAnswer,
+    // required this.clickedAnswer,
   });
 
-  final String answer;
-  final AnswerCardStatus answerCardStatus;
+  final int answer;
+  final int correctAnswer;
   final VoidCallback? onTap;
+  // final int clickedAnswer;
 
   @override
   Widget build(BuildContext context, ref) {
+
+    AnswerCardStatus answerCardStatus=AnswerCardStatus.normal;
+
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -90,15 +97,17 @@ class AnswerCard extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(
-                  answer,
-                  style: TextStyle(color: textColor(answerCardStatus)),
+                child: Center(
+                  child: Text(
+                    answer.toString(),
+                    style: TextStyle(color: textColor(answerCardStatus),fontSize: 23),
+                  ),
                 ),
               ),
-              Icon(
-                adaptiveIcon(answerCardStatus),
-                color: textColor(answerCardStatus),
-              ),
+              // Icon(
+              //   adaptiveIcon(answerCardStatus),
+              //   color: textColor(answerCardStatus),
+              // ),
             ],
           ),
         ),
