@@ -1,18 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:smile_game/ui/home_page/game_view/select_difficulty_view.dart';
 import 'package:smile_game/ui/home_page/home_page_provider.dart';
+import 'package:smile_game/ui/root_page/root_cubit.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
 import 'package:smile_game/ui/widgets/leader.dart';
 import 'package:smile_game/ui/widgets/reusable_widgets.dart';
+import 'package:smile_game/util/routes.dart';
 
 class HomePageView extends StatelessWidget {
   const HomePageView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+    final rootCubit = BlocProvider.of<RootCubit>(context);
+
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -43,7 +50,7 @@ class HomePageView extends StatelessWidget {
         ),
         drawer: Drawer(
           elevation: 10,
-          backgroundColor: Color(0xff1F1147),
+          backgroundColor: const Color(0xff1F1147),
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
@@ -61,23 +68,32 @@ class HomePageView extends StatelessWidget {
                 ),
                 child: Text(
                   'Smile Game',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white,fontSize: 34),
                 ),
               ),
               ListTile(
-                title: const Text('Item 1'),
+                title: const Text('Item 1',style: TextStyle(color: Colors.white),),
                 onTap: () {
                   // Update the state of the app.
                   // ...
                 },
               ),
               ListTile(
-                title: const Text('Item 2'),
+                title: const Text('Item 2',style: TextStyle(color: Colors.white),),
                 onTap: () {
                   // Update the state of the app.
                   // ...
                 },
               ),
+              ListTile(
+                leading: const Icon(Icons.exit_to_app,size: 30,color: Colors.redAccent,),
+                title: const Text('Logout',style: TextStyle(color: Colors.white),),
+                onTap: () {
+                  rootCubit.handleUserLoggedOut();
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, Routes.LOGIN_ROUTE, (route) => false);
+                },
+              )
             ],
           ),
         ),

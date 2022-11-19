@@ -64,9 +64,5 @@ class RootCubit extends Cubit<RootState> {
   }
 
 
-  getQuesting(){
-
-  }
-
 
 }

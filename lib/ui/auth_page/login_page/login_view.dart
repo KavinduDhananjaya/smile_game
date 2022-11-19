@@ -1,8 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smile_game/ui/auth_page/login_page/login_cubit.dart';
+import 'package:smile_game/ui/auth_page/login_page/login_state.dart';
+import 'package:smile_game/ui/auth_page/signup_view/signup_provider.dart';
 import 'package:smile_game/ui/auth_page/signup_view/signup_view.dart';
 import 'package:smile_game/ui/home_page/home_page_view.dart';
+import 'package:smile_game/ui/root_page/root_cubit.dart';
+import 'package:smile_game/ui/root_page/root_view.dart';
+import 'package:smile_game/ui/widgets/common_snack_bar.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
 import 'package:smile_game/ui/widgets/social_icon.dart';
 
@@ -53,9 +60,28 @@ class LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
 
+    final loginBloc = BlocProvider.of<LoginCubit>(context);
+    final rootBloc = BlocProvider.of<RootCubit>(context);
+
+    void _loginClicked() {
+      ScaffoldMessenger.of(context).showSnackBar(AppSnackBar.loadingSnackBar);
+
+      final email = (_emailController.text).trim();
+      final password = (_passwordController.text).trim();
+      if (email.isEmpty || password.isEmpty) {
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+            AppSnackBar.showErrorSnackBar("Email or Password is Empty!"));
+
+        return;
+      }
+
+      loginBloc.userLogin(email, password);
+    }
+
     final mediaData = MediaQuery.of(context);
 
-    return Scaffold(
+    final scaffold= Scaffold(
       body: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(_viewFocus),
         child: SingleChildScrollView(
@@ -91,6 +117,8 @@ class LoginViewState extends State<LoginView> {
                         height: 32,
                       ),
                       TextFormField(
+                        controller: _emailController,
+                        focusNode: _emailFocus,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         cursorColor: StyledColors.primaryColor,
@@ -106,6 +134,8 @@ class LoginViewState extends State<LoginView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: TextFormField(
+                          controller: _passwordController,
+                          focusNode: _passwordFocus,
                           textInputAction: TextInputAction.done,
                           obscureText: true,
                           cursorColor: StyledColors.primaryColor,
@@ -125,14 +155,7 @@ class LoginViewState extends State<LoginView> {
                         width: context.dynamicWidth(0.8),
                         child: InkWell(
                           onTap : () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return const HomePageView();
-                                },
-                              ),
-                            );
+                            _loginClicked();
                           },
                           child: Card(
                             color: Colors.deepPurpleAccent,
@@ -159,7 +182,7 @@ class LoginViewState extends State<LoginView> {
                             context,
                             MaterialPageRoute(
                               builder: (context) {
-                                return const SignUpView();
+                                return SignUpProvider();
                               },
                             ),
                           );
@@ -222,6 +245,57 @@ class LoginViewState extends State<LoginView> {
             ),
           ),
         ),
+      ),
+    );
+
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<LoginCubit, LoginState>(
+          listenWhen: (pre, current) => pre.error != current.error,
+          listener: (context, state) {
+            if (state.error.isNotEmpty) {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(AppSnackBar.showErrorSnackBar(state.error));
+            } else {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            }
+          },
+        ),
+        BlocListener<LoginCubit, LoginState>(
+          listenWhen: (pre, current) => pre.processing != current.processing,
+          listener: (context, state) {
+            if (state.processing) {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(AppSnackBar.loadingSnackBar);
+            } else {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            }
+          },
+        ),
+        BlocListener<LoginCubit, LoginState>(
+          listenWhen: (pre, current) =>
+          pre.email != current.email && current.email.isNotEmpty,
+          listener: (context, state) {
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
+
+            rootBloc.handleUserLogged(state.email);
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RootView(
+                  email: state.email,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+      child: WillPopScope(
+        onWillPop: () async => true,
+        child: scaffold,
       ),
     );
   }

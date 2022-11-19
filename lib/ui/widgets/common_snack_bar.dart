@@ -13,7 +13,7 @@ class AppSnackBar {
         ),
       ],
     ),
-    backgroundColor: StyledColors.primaryLight,
+    backgroundColor: StyledColors.primaryColor,
     duration: const Duration(seconds: 14),
   );
 
@@ -56,7 +56,7 @@ class AppSnackBar {
           ),
         ],
       ),
-      backgroundColor: StyledColors.primaryLight,
+      backgroundColor: StyledColors.primaryColor,
       behavior: SnackBarBehavior.floating,
       duration: const Duration(seconds: 3),
     );

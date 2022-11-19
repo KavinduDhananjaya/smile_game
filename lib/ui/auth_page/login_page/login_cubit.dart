@@ -62,13 +62,10 @@ class LoginCubit extends Cubit<LoginState> {
           return;
         }
 
-
         if(fetchEmail.first=="google.com"){
           errorEvent('The account already exists with a google account..please login using google');
           return;
         }
-
-
 
         if(fetchEmail.first=="facebook.com"){
           errorEvent('The account already exists with a facebook account..please login using facebook');
