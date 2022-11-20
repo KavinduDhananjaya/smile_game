@@ -13,6 +13,7 @@ class HomePageState {
   final double time;
   final int initialTime;
   final bool isClicked;
+  final bool isTimeOut;
   final int isCorrect;
 
   const HomePageState({
@@ -28,6 +29,7 @@ class HomePageState {
     required this.initialTime,
     required this.isClicked,
     required this.isCorrect,
+    required this.isTimeOut,
   });
 
   static HomePageState get initialState => const HomePageState(
@@ -43,6 +45,7 @@ class HomePageState {
         currentAnswer: -1,
         isClicked: false,
         isCorrect: -1,
+        isTimeOut: false,
       );
 
   HomePageState clone({
@@ -57,6 +60,7 @@ class HomePageState {
     double? time,
     int? initialTime,
     bool? isClicked,
+    bool? isTimeOut,
     int? isCorrect,
   }) {
     return HomePageState(
@@ -72,6 +76,7 @@ class HomePageState {
       initialTime: initialTime ?? this.initialTime,
       isClicked: isClicked ?? this.isClicked,
       isCorrect: isCorrect ?? this.isCorrect,
+      isTimeOut: isTimeOut ?? this.isTimeOut,
     );
   }
 }

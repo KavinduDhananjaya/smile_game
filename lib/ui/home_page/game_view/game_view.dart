@@ -331,6 +331,18 @@ class GameViewState extends State<GameView> {
           }
         },
       ),
+      BlocListener<HomePageCubit, HomePageState>(
+        listenWhen: (pre, current) =>
+        pre.isClicked != current.isClicked ||
+            pre.isCorrect != current.isCorrect || pre.isTimeOut !=current.isTimeOut,
+        listener: (context, state) async {
+         if(state.isTimeOut){
+           ScaffoldMessenger.of(context).removeCurrentSnackBar();
+           ScaffoldMessenger.of(context)
+               .showSnackBar(AppSnackBar.showErrorSnackBar('Time is over..Try next one'));
+         }
+        },
+      ),
     ], child: scaffold);
   }
 

@@ -49,7 +49,7 @@ class HomePageCubit extends Cubit<HomePageState> {
 
   getQuestionData(bool isStart) async {
     try {
-      emit(state.clone(isProcessing: true));
+      emit(state.clone(isProcessing: true,isTimeOut: false));
       // final url =
       //     Uri.https('marcconrad.com', '/uob/smile/api.php', {'q': '{https}'});
       //
@@ -108,7 +108,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       (Timer timer) {
         if (state.time == 0) {
           timer.cancel();
-          emit(state.clone(time: 0));
+          emit(state.clone(time: 0,isTimeOut: true));
         } else {
           final i = (state.time - 1);
           emit(state.clone(time: i.toDouble()));

@@ -133,7 +133,7 @@ class SignUpViewState extends State<SignUpView> {
                         controller: _nameController,
                         focusNode: _passwordFocus,
                         textInputAction: TextInputAction.next,
-                        obscureText: true,
+                        obscureText: false,
                         cursorColor: StyledColors.primaryColor,
                         decoration: const InputDecoration(
                           hintText: "Your Username",
