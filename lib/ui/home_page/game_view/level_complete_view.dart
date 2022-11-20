@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
-
-import '../../widgets/custom_button.dart';
 import '../../widgets/score_card.dart';
 
 
