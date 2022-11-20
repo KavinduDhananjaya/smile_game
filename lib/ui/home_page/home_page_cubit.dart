@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:smile_game/authentication/authentication.dart';
+import 'package:smile_game/db/repository/smile_api_repository_impl.dart';
 import 'package:smile_game/db/repository/user_repository.dart';
 import 'package:smile_game/ui/auth_page/login_page/login_state.dart';
 import 'package:smile_game/ui/home_page/home_page_state.dart';
@@ -32,6 +33,8 @@ class HomePageCubit extends Cubit<HomePageState> {
   late Timer _timer;
   final RootCubit rootCubit;
 
+  final _apiRepository=SmileApiRepositoryImpl();
+
   setDifficulty(int diff) async {
     if (diff > -1) {
       emit(state.clone(difficulty: diff));
@@ -47,10 +50,13 @@ class HomePageCubit extends Cubit<HomePageState> {
   getQuestionData(bool isStart) async {
     try {
       emit(state.clone(isProcessing: true));
-      final url =
-          Uri.https('marcconrad.com', '/uob/smile/api.php', {'q': '{https}'});
+      // final url =
+      //     Uri.https('marcconrad.com', '/uob/smile/api.php', {'q': '{https}'});
+      //
+      // final response = await http.get(url);
 
-      final response = await http.get(url);
+      final response=await _apiRepository.getData();
+
       if (response.statusCode == 200) {
         final jsonResponse =
             convert.jsonDecode(response.body) as Map<String, dynamic>;
@@ -86,11 +92,6 @@ class HomePageCubit extends Cubit<HomePageState> {
     emit(state.clone(currentAnswer: correctAnswer));
   }
 
-  setScore() {}
-
-  updateScore() {}
-
-  setTime() {}
 
   startTimer() {
     if (state.difficulty == 0) {

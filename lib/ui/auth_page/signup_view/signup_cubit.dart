@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:intl/intl.dart';
-import 'package:smile_game/db/repository/user_repository_impl.dart';
 import 'package:smile_game/ui/auth_page/signup_view/signup_state.dart';
 import '../../../authentication/authentication.dart';
 import '../../../db/model/user_model.dart';
