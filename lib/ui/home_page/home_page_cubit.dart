@@ -13,10 +13,18 @@ class HomePageCubit extends Cubit<HomePageState> {
   HomePageCubit(BuildContext context)
       : rootCubit = BlocProvider.of(context),
         super(HomePageState.initialState) {
-    emit(state.clone(score: rootCubit.state.currentUser?.score));
+    emit(state.clone(
+      score: rootCubit.state.currentUser?.score,
+      currentIndex: rootCubit.state.currentUser?.played,
+      currentLevel: rootCubit.state.currentUser?.level,
+    ));
     getQuestionData(true);
     rootCubit.stream.listen((event) {
-      emit(state.clone(score: event.currentUser?.score));
+      emit(state.clone(
+        score: event.currentUser?.score,
+        currentIndex: rootCubit.state.currentUser?.played,
+        currentLevel: rootCubit.state.currentUser?.level,
+      ));
     });
   }
 
@@ -40,21 +48,12 @@ class HomePageCubit extends Cubit<HomePageState> {
 
   void timeOut() {
     getQuestionData(false);
+    updateLevel();
   }
-
-  void setLevel(){
-
-
-  }
-
 
   getQuestionData(bool isStart) async {
     try {
       emit(state.clone(isProcessing: true, isTimeOut: false));
-      // final url =
-      //     Uri.https('marcconrad.com', '/uob/smile/api.php', {'q': '{https}'});
-      //
-      // final response = await http.get(url);
 
       final response = await _apiRepository.getData();
 
@@ -126,13 +125,36 @@ class HomePageCubit extends Cubit<HomePageState> {
 
         await _userRepository.update(
           item: rootCubit.state.currentUser!,
-          mapper: (_) => {'score': state.score + 10},
+          mapper: (_) => {
+            'score': state.score + 10,
+          },
           parent: rootCubit.state.currentUser?.ref,
         );
       } else {
         emit(state.clone(isCorrect: 1));
       }
     }
+  }
+
+  Future<void> updateLevel() async {
+    int? currentLevel = state.currentLevel;
+    int? currentIndex = state.currentIndex;
+
+    if (currentIndex != 5) {
+      currentIndex = currentIndex + 1;
+    } else if (currentIndex == 5 && currentLevel >= 0) {
+      currentIndex = 1;
+      currentLevel = currentLevel + 1;
+    }
+
+    await _userRepository.update(
+      item: rootCubit.state.currentUser!,
+      mapper: (_) => {
+        'level': currentLevel,
+        'played': currentIndex,
+      },
+      parent: rootCubit.state.currentUser?.ref,
+    );
   }
 
   void closeTimer() {

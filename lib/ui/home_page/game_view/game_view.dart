@@ -127,18 +127,25 @@ class GameViewState extends State<GameView> {
                             ),
                           );
                         }),
-                    // SizedBox(
-                    //   height: context.dynamicHeight(0.01),
-                    // ),
-                    // Container(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 16),
-                    //   width: double.infinity,
-                    //   child: const Text(
-                    //     'Question ${ 1}/7',
-                    //     textAlign: TextAlign.start,
-                    //     style: TextStyle(fontSize: 25,color: Colors.white),
-                    //   ),
-                    // ),
+                    SizedBox(
+                      height: context.dynamicHeight(0.02),
+                    ),
+                    BlocBuilder<HomePageCubit, HomePageState>(
+                        buildWhen: (pre, current) =>
+                            pre.currentIndex != current.currentIndex ||
+                            pre.currentLevel != current.currentLevel,
+                        builder: (context, snapshot) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            width: double.infinity,
+                            child: Text(
+                              'Question : ${snapshot.currentIndex}/7',
+                              textAlign: TextAlign.start,
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.white),
+                            ),
+                          );
+                        }),
                     Expanded(
                       flex: 2,
                       child: Padding(
@@ -248,7 +255,6 @@ class GameViewState extends State<GameView> {
                             ),
                           );
                         }),
-
                     BlocBuilder<HomePageCubit, HomePageState>(
                         buildWhen: (pre, current) =>
                             pre.isClicked != current.isClicked,
@@ -262,9 +268,10 @@ class GameViewState extends State<GameView> {
                               width: context.dynamicWidth(0.8),
                               child: InkWell(
                                 onTap: () {
-                                  snapshot.isClicked
-                                      ? gameCubit.getQuestionData(false)
-                                      : null;
+                                  if (snapshot.isClicked) {
+                                    gameCubit.getQuestionData(false);
+                                    gameCubit.updateLevel();
+                                  }
                                 },
                                 child: Card(
                                   color: !snapshot.isClicked
@@ -401,10 +408,13 @@ class GameViewState extends State<GameView> {
             side: const BorderSide(color: Colors.red, width: 2),
           ),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 32,vertical: 52),
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 52),
             child: Text(
               'Opps..Timout',
-              style: TextStyle(fontSize: 24, color: Colors.white,),
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.white,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -412,5 +422,4 @@ class GameViewState extends State<GameView> {
       },
     );
   }
-
 }
