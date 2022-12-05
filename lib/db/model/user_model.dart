@@ -12,6 +12,8 @@ class UserModel extends DBModel {
   int difficulty;
   int rank;
   int score;
+  int level;
+  int played;
 
   UserModel({
     DocumentReference? ref,
@@ -20,6 +22,8 @@ class UserModel extends DBModel {
     required this.difficulty,
     required this.rank,
     required this.score,
+    required this.level,
+    required this.played,
     this.profileImage,
   }) : super(ref: ref);
 
@@ -33,6 +37,8 @@ class UserModel extends DBModel {
       difficulty: difficulty,
       rank: rank,
       score: score,
+      level: level,
+      played: played,
     );
   }
 }

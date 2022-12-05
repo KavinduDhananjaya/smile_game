@@ -56,17 +56,16 @@ class GameViewState extends State<GameView> {
                   pre.isProcessing != current.isProcessing,
               builder: (context, state) {
                 if (state.isProcessing) {
-
-                  final spinkit = SpinKitCircle(
+                  final spinkit = const SpinKitCircle(
                     color: Colors.white,
                     size: 70.0,
                   );
 
                   return Column(
-                    children:  [
-                      Spacer(),
+                    children: [
+                      const Spacer(),
                       spinkit,
-                      Spacer(),
+                      const Spacer(),
                     ],
                   );
                 }
@@ -164,7 +163,6 @@ class GameViewState extends State<GameView> {
 
                           final range = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-
                           if (range.contains(correct)) {
                             int randomNumber = rng.nextInt(10);
                             range.remove(correct);
@@ -253,40 +251,46 @@ class GameViewState extends State<GameView> {
 
                     BlocBuilder<HomePageCubit, HomePageState>(
                         buildWhen: (pre, current) =>
-                        pre.isClicked != current.isClicked,
-                      builder: (context, snapshot) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: context.dynamicWidth(0.1),
-                              vertical: context.dynamicHeight(0.04)),
-                          child: SizedBox(
-                            height: context.dynamicHeight(0.08),
-                            width: context.dynamicWidth(0.8),
-                            child: InkWell(
-                              onTap: () {
-                                snapshot.isClicked?gameCubit.getQuestionData(false):null;
-                              },
-                              child: Card(
-                                color:  !snapshot.isClicked?Colors.deepPurpleAccent.withOpacity(0.3):Colors.deepPurpleAccent,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                child: Center(
-                                  child: Text(
-                                    "Next Quiz",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headline5
-                                        ?.copyWith(
-                                            color:snapshot.isClicked? Colors.white:Colors.white.withOpacity(0.1),
-                                            fontWeight: FontWeight.bold),
+                            pre.isClicked != current.isClicked,
+                        builder: (context, snapshot) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: context.dynamicWidth(0.1),
+                                vertical: context.dynamicHeight(0.04)),
+                            child: SizedBox(
+                              height: context.dynamicHeight(0.08),
+                              width: context.dynamicWidth(0.8),
+                              child: InkWell(
+                                onTap: () {
+                                  snapshot.isClicked
+                                      ? gameCubit.getQuestionData(false)
+                                      : null;
+                                },
+                                child: Card(
+                                  color: !snapshot.isClicked
+                                      ? Colors.deepPurpleAccent.withOpacity(0.3)
+                                      : Colors.deepPurpleAccent,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Center(
+                                    child: Text(
+                                      "Next Quiz",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline5
+                                          ?.copyWith(
+                                              color: snapshot.isClicked
+                                                  ? Colors.white
+                                                  : Colors.white
+                                                      .withOpacity(0.1),
+                                              fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      }
-                    ),
+                          );
+                        }),
                   ],
                 );
               }),
@@ -332,15 +336,19 @@ class GameViewState extends State<GameView> {
         },
       ),
       BlocListener<HomePageCubit, HomePageState>(
-        listenWhen: (pre, current) =>
-        pre.isClicked != current.isClicked ||
-            pre.isCorrect != current.isCorrect || pre.isTimeOut !=current.isTimeOut,
+        listenWhen: (pre, current) => pre.isTimeOut != current.isTimeOut,
         listener: (context, state) async {
-         if(state.isTimeOut){
-           ScaffoldMessenger.of(context).removeCurrentSnackBar();
-           ScaffoldMessenger.of(context)
-               .showSnackBar(AppSnackBar.showErrorSnackBar('Time is over..Try next one'));
-         }
+          if (state.isTimeOut) {
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            _showTimeOutDialog();
+            await Future.delayed(
+              const Duration(seconds: 2),
+              () {
+                Navigator.pop(context);
+                gameCubit.timeOut();
+              },
+            );
+          }
         },
       ),
     ], child: scaffold);
@@ -380,48 +388,29 @@ class GameViewState extends State<GameView> {
     );
   }
 
-  void showAlertDialog(BuildContext context) {
-    Widget cancelButton = TextButton(
-      child: const Text(
-        "Testten çık",
-        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-      ),
-      onPressed: () {
-        Navigator.pop(context);
-        Navigator.of(context, rootNavigator: true).pop('dialog');
-      },
-    );
-    Widget continueButton = TextButton(
-      child: const Text("Devam et",
-          style: const TextStyle(
-              color: const Color(0xff26CE55), fontWeight: FontWeight.bold)),
-      onPressed: () {
-        Navigator.of(context, rootNavigator: true).pop('dialog');
-      },
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      backgroundColor: const Color(0xff14154F),
-      title: const Text(
-        "Uyarı!",
-        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-      ),
-      content: const Text(
-          "Testten çıkarsanız bir daha bu testten puan kazanamayacaksınız!!",
-          style: TextStyle(color: Colors.white)),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
+  Future<void> _showTimeOutDialog() async {
+    return showDialog<void>(
       context: context,
+      barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
-        return alert;
+        return Dialog(
+          backgroundColor: Colors.redAccent,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: Colors.red, width: 2),
+          ),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 32,vertical: 52),
+            child: Text(
+              'Opps..Timout',
+              style: TextStyle(fontSize: 24, color: Colors.white,),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
       },
     );
   }
+
 }

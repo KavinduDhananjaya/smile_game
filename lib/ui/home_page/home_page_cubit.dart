@@ -1,26 +1,18 @@
 import 'dart:async';
-
-import 'package:bloc/bloc.dart';
-import 'package:fcode_bloc/fcode_bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:smile_game/authentication/authentication.dart';
-import 'package:smile_game/db/repository/smile_api_repository_impl.dart';
-import 'package:smile_game/db/repository/user_repository.dart';
-import 'package:smile_game/ui/auth_page/login_page/login_state.dart';
-import 'package:smile_game/ui/home_page/home_page_state.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
+import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smile_game/db/repository/smile_api_repository_impl.dart';
+import 'package:smile_game/db/repository/user_repository.dart';
+import 'package:smile_game/ui/home_page/home_page_state.dart';
 import 'package:smile_game/ui/root_page/root_cubit.dart';
 
 class HomePageCubit extends Cubit<HomePageState> {
   HomePageCubit(BuildContext context)
       : rootCubit = BlocProvider.of(context),
         super(HomePageState.initialState) {
-
     emit(state.clone(score: rootCubit.state.currentUser?.score));
     getQuestionData(true);
     rootCubit.stream.listen((event) {
@@ -33,7 +25,7 @@ class HomePageCubit extends Cubit<HomePageState> {
   late Timer _timer;
   final RootCubit rootCubit;
 
-  final _apiRepository=SmileApiRepositoryImpl();
+  final _apiRepository = SmileApiRepositoryImpl();
 
   setDifficulty(int diff) async {
     if (diff > -1) {
@@ -43,19 +35,28 @@ class HomePageCubit extends Cubit<HomePageState> {
           item: rootCubit.state.currentUser!,
           mapper: (_) => {'difficulty': diff},
           parent: rootCubit.state.currentUser?.ref);
-
     }
   }
 
+  void timeOut() {
+    getQuestionData(false);
+  }
+
+  void setLevel(){
+
+
+  }
+
+
   getQuestionData(bool isStart) async {
     try {
-      emit(state.clone(isProcessing: true,isTimeOut: false));
+      emit(state.clone(isProcessing: true, isTimeOut: false));
       // final url =
       //     Uri.https('marcconrad.com', '/uob/smile/api.php', {'q': '{https}'});
       //
       // final response = await http.get(url);
 
-      final response=await _apiRepository.getData();
+      final response = await _apiRepository.getData();
 
       if (response.statusCode == 200) {
         final jsonResponse =
@@ -69,7 +70,6 @@ class HomePageCubit extends Cubit<HomePageState> {
 
         emit(state.clone(isProcessing: false, isClicked: false, isCorrect: -1));
         startTimer();
-
       } else {
         emit(state.clone(isProcessing: false, isClicked: false, isCorrect: -1));
         await setAnswers(0);
@@ -92,7 +92,6 @@ class HomePageCubit extends Cubit<HomePageState> {
     emit(state.clone(currentAnswer: correctAnswer));
   }
 
-
   startTimer() {
     if (state.difficulty == 0) {
       emit(state.clone(initialTime: 30, time: 30));
@@ -108,7 +107,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       (Timer timer) {
         if (state.time == 0) {
           timer.cancel();
-          emit(state.clone(time: 0,isTimeOut: true));
+          emit(state.clone(time: 0, isTimeOut: true));
         } else {
           final i = (state.time - 1);
           emit(state.clone(time: i.toDouble()));
@@ -126,13 +125,12 @@ class HomePageCubit extends Cubit<HomePageState> {
         emit(state.clone(isCorrect: 0));
 
         await _userRepository.update(
-            item: rootCubit.state.currentUser!,
-            mapper: (_) => {'score': state.score + 10},
-            parent: rootCubit.state.currentUser?.ref);
+          item: rootCubit.state.currentUser!,
+          mapper: (_) => {'score': state.score + 10},
+          parent: rootCubit.state.currentUser?.ref,
+        );
       } else {
         emit(state.clone(isCorrect: 1));
-
-
       }
     }
   }

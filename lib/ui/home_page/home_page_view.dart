@@ -2,9 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:smile_game/ui/home_page/game_view/game_view.dart';
-import 'package:smile_game/ui/home_page/game_view/select_difficulty_view.dart';
 import 'package:smile_game/ui/home_page/home_page_cubit.dart';
 import 'package:smile_game/ui/home_page/home_page_provider.dart';
 import 'package:smile_game/ui/root_page/root_cubit.dart';
@@ -13,7 +11,6 @@ import 'package:smile_game/ui/widgets/context_extension.dart';
 import 'package:smile_game/ui/widgets/leader.dart';
 import 'package:smile_game/ui/widgets/reusable_widgets.dart';
 import 'package:smile_game/util/routes.dart';
-
 import 'game_view/leaderboard_view.dart';
 
 class HomePageView extends StatelessWidget {
@@ -22,6 +19,8 @@ class HomePageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rootCubit = BlocProvider.of<RootCubit>(context);
+
+
 
     return Container(
       decoration: const BoxDecoration(

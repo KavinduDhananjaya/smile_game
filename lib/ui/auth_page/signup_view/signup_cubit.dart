@@ -15,7 +15,6 @@ class SignUpCubit extends Cubit<SignUpState> {
   final auth = Authentication();
   final userRepo = UserRepository();
 
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool isValidEmail(String email) {
@@ -53,7 +52,6 @@ class SignUpCubit extends Cubit<SignUpState> {
       return;
     }
 
-
     try {
       final formatter = DateFormat('dd-MM-yyyy');
       String formattedDate = formatter.format(DateTime.now());
@@ -67,6 +65,8 @@ class SignUpCubit extends Cubit<SignUpState> {
           difficulty: -1,
           rank: -1,
           name: name,
+          level: 1,
+          played: 0,
         );
 
         await userRepo.add(
@@ -112,6 +112,8 @@ class SignUpCubit extends Cubit<SignUpState> {
             score: 0,
             difficulty: -1,
             rank: -1,
+            level: 1,
+            played: 0,
           );
 
           await userRepo.add(
@@ -137,7 +139,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     }
   }
 
-  signUpUsingFaceBook() async {
+  Future<void> signUpUsingFaceBook() async {
     final LoginResult result = await FacebookAuth.i.login();
 
     if (result.status == LoginStatus.success) {
@@ -166,6 +168,8 @@ class SignUpCubit extends Cubit<SignUpState> {
               score: 0,
               difficulty: -1,
               rank: -1,
+              level: 1,
+              played: 0,
             );
 
             await userRepo.add(

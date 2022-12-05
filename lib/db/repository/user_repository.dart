@@ -2,10 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fcode_bloc/fcode_bloc.dart';
 import '../model/user_model.dart';
 
- class UserRepository extends FirebaseRepository<UserModel> {
+class UserRepository extends FirebaseRepository<UserModel> {
   UserRepository() : super('User');
-
-
 
   @override
   UserModel fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -13,13 +11,16 @@ import '../model/user_model.dart';
     final data = snapshot.data()!;
 
     return UserModel(
-        ref: snapshot.reference,
-        email: data['email'] ?? '',
-        name: data['name'] ?? '',
-        profileImage: data['profileImage'] ?? '',
-        rank: data['rank'] ?? -1,
-        difficulty: data['difficulty'] ?? -1,
-        score: data['score'] ?? 0);
+      ref: snapshot.reference,
+      email: data['email'] ?? '',
+      name: data['name'] ?? '',
+      profileImage: data['profileImage'] ?? '',
+      rank: data['rank'] ?? -1,
+      difficulty: data['difficulty'] ?? -1,
+      score: data['score'] ?? 0,
+      level: data['level'] ?? 1,
+      played: data['played'] ?? 0,
+    );
   }
 
   @override
@@ -31,6 +32,8 @@ import '../model/user_model.dart';
       'score': value.score,
       'rank': value.rank,
       'difficulty': value.difficulty,
+      'level': value.level,
+      'played': value.played,
     };
   }
 

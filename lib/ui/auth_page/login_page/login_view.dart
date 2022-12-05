@@ -233,7 +233,7 @@ class LoginViewState extends State<LoginView> {
                           SocalIcon(
                             iconSrc: "assets/icons/google-plus.svg",
                             press: () {
-                              loginBloc.googleLogin();
+                              // loginBloc.googleLogin();
                             },
                           ),
                         ],
