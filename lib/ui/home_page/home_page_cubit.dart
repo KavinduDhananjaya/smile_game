@@ -128,7 +128,7 @@ class HomePageCubit extends Cubit<HomePageState> {
 
   checkAnswer(int i) async {
     _timer.cancel();
-    emit(state.clone(isClicked: true));
+    emit(state.clone(isClicked: true,isLevelComplete: false));
 
     if (state.isCorrect == -1) {
       if (i == state.currentAnswer) {
@@ -148,15 +148,23 @@ class HomePageCubit extends Cubit<HomePageState> {
     }
   }
 
+
+  Future<void> nextLevel() async {
+    emit(state.clone(isLevelComplete: false));
+
+  }
+
   Future<void> updateLevel() async {
+    emit(state.clone(isLevelComplete: false));
     int? currentLevel = state.currentLevel;
     int? currentIndex = state.currentIndex;
 
-    if (currentIndex != 10) {
+    if (currentIndex != 5) {
       currentIndex = currentIndex + 1;
-    } else if (currentIndex == 10 && currentLevel >= 0) {
+    } else if (currentIndex == 5 && currentLevel >= 0) {
       currentIndex = 1;
       currentLevel = currentLevel + 1;
+      emit(state.clone(isLevelComplete: true));
     }
 
     await _userRepository.update(

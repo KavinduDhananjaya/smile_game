@@ -14,6 +14,7 @@ class HomePageState {
   final int initialTime;
   final bool isClicked;
   final bool isTimeOut;
+  final bool isLevelComplete;
   final int isCorrect;
 
   const HomePageState({
@@ -28,6 +29,7 @@ class HomePageState {
     required this.time,
     required this.initialTime,
     required this.isClicked,
+    required this.isLevelComplete,
     required this.isCorrect,
     required this.isTimeOut,
   });
@@ -46,6 +48,7 @@ class HomePageState {
         isClicked: false,
         isCorrect: -1,
         isTimeOut: false,
+        isLevelComplete: false,
       );
 
   HomePageState clone({
@@ -62,6 +65,7 @@ class HomePageState {
     bool? isClicked,
     bool? isTimeOut,
     int? isCorrect,
+    bool? isLevelComplete,
   }) {
     return HomePageState(
       currentQuestionImage: currentQuestionImage ?? this.currentQuestionImage,
@@ -77,6 +81,7 @@ class HomePageState {
       isClicked: isClicked ?? this.isClicked,
       isCorrect: isCorrect ?? this.isCorrect,
       isTimeOut: isTimeOut ?? this.isTimeOut,
+      isLevelComplete: isLevelComplete ?? this.isLevelComplete,
     );
   }
 }

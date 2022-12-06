@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:smile_game/ui/home_page/game_view/level_complete_view.dart';
 import 'package:smile_game/ui/home_page/home_page_cubit.dart';
 import 'package:smile_game/ui/home_page/home_page_state.dart';
 import 'package:smile_game/ui/root_page/root_cubit.dart';
@@ -53,8 +54,10 @@ class GameViewState extends State<GameView> {
                   pre.isProcessing != current.isProcessing ||
                   pre.currentQuestionImage != current.currentQuestionImage ||
                   pre.currentAnswer != current.currentAnswer ||
-                  pre.isProcessing != current.isProcessing,
+                  pre.isProcessing != current.isProcessing ||
+                  pre.isLevelComplete != current.isLevelComplete,
               builder: (context, state) {
+
                 if (state.isProcessing) {
                   const spinkit = SpinKitCircle(
                     color: Colors.white,
@@ -69,6 +72,11 @@ class GameViewState extends State<GameView> {
                     ],
                   );
                 }
+
+                if (state.isLevelComplete) {
+                  return const LevelCompleteView();
+                }
+
                 return Column(
                   children: [
                     Row(
@@ -141,8 +149,8 @@ class GameViewState extends State<GameView> {
                             child: Text(
                               'Question : ${snapshot.currentIndex}/10',
                               textAlign: TextAlign.start,
-                              style:
-                                  TextStyle(fontSize: 20, color: Colors.white),
+                              style: const TextStyle(
+                                  fontSize: 20, color: Colors.white),
                             ),
                           );
                         }),
@@ -410,10 +418,10 @@ class GameViewState extends State<GameView> {
             side: const BorderSide(color: Colors.red, width: 2),
           ),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 52),
-            child: Text(
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 52),
+            child: const Text(
               'Opps..Timout',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24,
                 color: Colors.white,
               ),
