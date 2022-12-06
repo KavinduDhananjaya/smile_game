@@ -11,7 +11,7 @@ class HomePageProvider extends BlocProvider<HomePageCubit> {
     Key? key,
   }) : super(
     key: key,
-    create: (context) => HomePageCubit(context),
+    create: (context) => HomePageCubit(context,true),
     child:  const SelectDifficultyView(),
   );
 }

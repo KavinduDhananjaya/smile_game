@@ -10,30 +10,41 @@ import 'package:smile_game/ui/home_page/home_page_state.dart';
 import 'package:smile_game/ui/root_page/root_cubit.dart';
 
 class HomePageCubit extends Cubit<HomePageState> {
-  HomePageCubit(BuildContext context)
+  HomePageCubit(BuildContext context, this.isFirstTime)
       : rootCubit = BlocProvider.of(context),
         super(HomePageState.initialState) {
+
     emit(state.clone(
       score: rootCubit.state.currentUser?.score,
       currentIndex: rootCubit.state.currentUser?.played,
       currentLevel: rootCubit.state.currentUser?.level,
     ));
-    getQuestionData(true);
-    rootCubit.stream.listen((event) {
-      emit(state.clone(
-        score: event.currentUser?.score,
-        currentIndex: rootCubit.state.currentUser?.played,
-        currentLevel: rootCubit.state.currentUser?.level,
-      ));
-    });
+
+    if(!isFirstTime){
+      getQuestionData(true);
+    }
+
+    // rootBlocListener();
   }
 
   final _userRepository = UserRepository();
+
+  final bool isFirstTime;
 
   late Timer _timer;
   final RootCubit rootCubit;
 
   final _apiRepository = SmileApiRepositoryImpl();
+
+  rootBlocListener() {
+    rootCubit.stream.listen((event) {
+      emit(state.clone(
+        score: event.currentUser?.score,
+        currentIndex: event.currentUser?.played,
+        currentLevel: event.currentUser?.level,
+      ));
+    });
+  }
 
   setDifficulty(int diff) async {
     if (diff > -1) {
@@ -130,6 +141,7 @@ class HomePageCubit extends Cubit<HomePageState> {
           },
           parent: rootCubit.state.currentUser?.ref,
         );
+        emit(state.clone(score: state.score + 10));
       } else {
         emit(state.clone(isCorrect: 1));
       }
@@ -140,9 +152,9 @@ class HomePageCubit extends Cubit<HomePageState> {
     int? currentLevel = state.currentLevel;
     int? currentIndex = state.currentIndex;
 
-    if (currentIndex != 5) {
+    if (currentIndex != 10) {
       currentIndex = currentIndex + 1;
-    } else if (currentIndex == 5 && currentLevel >= 0) {
+    } else if (currentIndex == 10 && currentLevel >= 0) {
       currentIndex = 1;
       currentLevel = currentLevel + 1;
     }
@@ -155,6 +167,8 @@ class HomePageCubit extends Cubit<HomePageState> {
       },
       parent: rootCubit.state.currentUser?.ref,
     );
+
+    emit(state.clone(currentLevel: currentLevel, currentIndex: currentIndex));
   }
 
   void closeTimer() {

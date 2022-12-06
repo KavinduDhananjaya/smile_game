@@ -20,8 +20,6 @@ class HomePageView extends StatelessWidget {
   Widget build(BuildContext context) {
     final rootCubit = BlocProvider.of<RootCubit>(context);
 
-
-
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -248,7 +246,7 @@ class HomePageView extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (context) =>
                                     BlocProvider<HomePageCubit>(
-                                  create: (context) => HomePageCubit(context),
+                                  create: (context) => HomePageCubit(context,false),
                                   child: const GameView(),
                                 ),
                               ),
@@ -315,14 +313,14 @@ class HomePageView extends StatelessWidget {
               ],
             ),
             content: const Text(
-              "Onurhan KAYA\nSelçuk Üniversitesi 3.Sınıf\n\nKaan Güler\nKocaeli Üniversitesi 3.Sınıf\n\nDurmuş Cem Koca\nKocaeli Üniversitesi 4.Sınıf\n\nÇiğdem Bircan\nPamukkale Üniversitesi 4.Sınıf\n\nAvni Burak Çıtlak\nBilgi Üniversitesi 4.Sınıf",
+              "01. Select the difficulty.\n\n02. Then hit the play button\n\n03. calculate and select the correct answer\n\n04. Then click the next quiz.",
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white),
             ),
             actions: <Widget>[
               FlatButton(
                 child: const Text(
-                  "Ok",
+                  "OK",
                   style: TextStyle(color: Color(0xff00B2FF), fontSize: 20),
                 ),
                 onPressed: () {

@@ -7,31 +7,31 @@ import 'package:smile_game/ui/root_page/root_cubit.dart';
 import 'package:smile_game/ui/root_page/root_view.dart';
 import 'package:smile_game/util/routes.dart';
 
-
-
 class SmileGameAppView extends StatelessWidget {
-
   const SmileGameAppView(
-      this.email,
-      );
+    this.email,
+  );
 
   final String? email;
 
   @override
   Widget build(BuildContext context) {
-
     final materialApp = MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Smile Game",
       theme: PrimaryTheme.generateTheme(context),
       onGenerateRoute: Routes.generator,
-      home: RootView(email: email,),
+      home: RootView(
+        email: email,
+      ),
     );
-
 
     return MultiBlocProvider(
       providers: <BlocProvider>[
-        BlocProvider<RootCubit>(create: (context) => RootCubit(context)),
+        BlocProvider<RootCubit>(
+          create: (context) => RootCubit(context),
+          lazy: false,
+        ),
       ],
       child: materialApp,
     );

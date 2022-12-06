@@ -6,6 +6,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:smile_game/ui/home_page/game_view/game_complete_view.dart';
 import 'package:smile_game/ui/home_page/home_page_cubit.dart';
 import 'package:smile_game/ui/home_page/home_page_provider.dart';
+import 'package:smile_game/ui/home_page/home_page_state.dart';
 import 'package:smile_game/ui/root_page/root_cubit.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
 
@@ -82,16 +83,7 @@ class SelectDifficultyView extends StatelessWidget {
                     ),
                   ),
                   InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return const GameCompleteView(score: 12);
-                          },
-                        ),
-                      );
-                    },
+                    onTap: () {},
                     child: const CustomStack(
                       image: 'assets/images/Component_4.png',
                       text1: 'Normal',
@@ -102,16 +94,7 @@ class SelectDifficultyView extends StatelessWidget {
                     ),
                   ),
                   InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return const LevelCompleteView();
-                          },
-                        ),
-                      );
-                    },
+                    onTap: () {},
                     child: const CustomStack(
                       image: 'assets/images/Component_6.png',
                       text1: 'Hard',
@@ -131,37 +114,48 @@ class SelectDifficultyView extends StatelessWidget {
               child: SizedBox(
                 height: context.dynamicHeight(0.09),
                 width: context.dynamicWidth(0.8),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BlocProvider.value(
-                          value: gameCubit,
-                          child: const GameView(),
+                child: BlocBuilder<HomePageCubit, HomePageState>(
+                    buildWhen: (pre, current) =>
+                        pre.difficulty != current.difficulty,
+                    builder: (context, snapshot) {
+                      return InkWell(
+                        onTap: () {
+                          gameCubit.setDifficulty(snapshot.difficulty);
+                          gameCubit.getQuestionData(true);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BlocProvider.value(
+                                value: gameCubit,
+                                child: const GameView(),
+                              ),
+                            ),
+                          );
+                          // Navigator.of(context).push(PageTransition(
+                          //     child: BlocProvider.value(
+                          //         value: gameCubit, child: const GameView()),
+                          //     type: PageTransitionType.bottomToTop,
+                          //     duration: const Duration(milliseconds: 500),
+                          //     reverseDuration: const Duration(milliseconds: 400)));
+                        },
+                        child: Card(
+                          color: Colors.deepPurpleAccent,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Center(
+                            child: Text(
+                              "Select",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline5
+                                  ?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                    // Navigator.of(context).push(PageTransition(
-                    //     child: BlocProvider.value(
-                    //         value: gameCubit, child: const GameView()),
-                    //     type: PageTransitionType.bottomToTop,
-                    //     duration: const Duration(milliseconds: 500),
-                    //     reverseDuration: const Duration(milliseconds: 400)));
-                  },
-                  child: Card(
-                    color: Colors.deepPurpleAccent,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Center(
-                      child: Text(
-                        "Select",
-                        style: Theme.of(context).textTheme.headline5?.copyWith(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ),
+                      );
+                    }),
               ),
             ),
           ],

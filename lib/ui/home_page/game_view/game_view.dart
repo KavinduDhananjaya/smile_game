@@ -56,16 +56,16 @@ class GameViewState extends State<GameView> {
                   pre.isProcessing != current.isProcessing,
               builder: (context, state) {
                 if (state.isProcessing) {
-                  final spinkit = const SpinKitCircle(
+                  const spinkit = SpinKitCircle(
                     color: Colors.white,
                     size: 70.0,
                   );
 
                   return Column(
-                    children: [
-                      const Spacer(),
+                    children: const [
+                      Spacer(),
                       spinkit,
-                      const Spacer(),
+                      Spacer(),
                     ],
                   );
                 }
@@ -139,7 +139,7 @@ class GameViewState extends State<GameView> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             width: double.infinity,
                             child: Text(
-                              'Question : ${snapshot.currentIndex}/7',
+                              'Question : ${snapshot.currentIndex}/10',
                               textAlign: TextAlign.start,
                               style:
                                   TextStyle(fontSize: 20, color: Colors.white),
@@ -170,16 +170,18 @@ class GameViewState extends State<GameView> {
 
                           final range = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-                          if (range.contains(correct)) {
-                            int randomNumber = rng.nextInt(10);
-                            range.remove(correct);
-                            range.add(randomNumber);
-                            if (range.contains(correct)) {
-                              int randomNumber = rng.nextInt(10);
-                              range.remove(correct);
-                              range.add(randomNumber);
-                            }
-                          }
+                          range.remove(correct);
+
+                          // if (range.contains(correct)) {
+                          //   int randomNumber = rng.nextInt(10);
+                          //   range.remove(correct);
+                          //   range.add(randomNumber);
+                          //   if (range.contains(correct)) {
+                          //     int randomNumber = rng.nextInt(10);
+                          //     range.remove(correct);
+                          //     range.add(randomNumber);
+                          //   }
+                          // }
 
                           range.shuffle();
 
