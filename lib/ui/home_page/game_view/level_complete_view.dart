@@ -65,67 +65,8 @@ class LevelCompleteView extends StatelessWidget {
           ),
         ),
         SizedBox(height: context.dynamicHeight(0.05)),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // SizedBox(
-            //   width: context.dynamicWidth(0.4),
-            //   height: context.dynamicHeight(0.15),
-            //   child: Card(
-            //     color: Color(0xff14154F),
-            //     shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(25),
-            //         side: BorderSide(color: Color(0xffFF5ED2), width: 3)),
-            //     child: Column(
-            //       mainAxisAlignment: MainAxisAlignment.center,
-            //       children: [
-            //         Text(
-            //           '111',
-            //           style: Theme.of(context).textTheme.headline5?.copyWith(
-            //               color: Color(0xffFF5ED2),
-            //               fontWeight: FontWeight.bold),
-            //         ),
-            //         Text(
-            //           "PUAN",
-            //           style: Theme.of(context).textTheme.headline5?.copyWith(
-            //               color: Color(0xffFF5ED2),
-            //               fontWeight: FontWeight.bold),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            // SizedBox(
-            //   width: context.dynamicWidth(0.4),
-            //   height: context.dynamicHeight(0.15),
-            //   child: Card(
-            //     color: Color(0xff14154F),
-            //     shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(25),
-            //         side: BorderSide(color: Color(0xff00B2FF), width: 3)),
-            //     child: Column(
-            //       mainAxisAlignment: MainAxisAlignment.center,
-            //       children: [
-            //         Text(
-            //           '1' + "/10",
-            //           style: Theme.of(context).textTheme.headline5?.copyWith(
-            //               color: Color(0xff00B2FF),
-            //               fontWeight: FontWeight.bold),
-            //         ),
-            //         Text(
-            //           "DOĞRU",
-            //           style: Theme.of(context).textTheme.headline5?.copyWith(
-            //               color: Color(0xff00B2FF),
-            //               fontWeight: FontWeight.bold),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-          ],
-        ),
         SizedBox(height: context.dynamicHeight(0.05)),
-        Spacer(),
+        const Spacer(),
         SizedBox(
           height: context.dynamicHeight(0.09),
           width: context.dynamicWidth(0.8),

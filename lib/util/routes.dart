@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:smile_game/ui/auth_page/login_page/login_provider.dart';
+import 'package:smile_game/ui/auth_page/login_view/login_provider.dart';
 import 'package:smile_game/ui/home_page/home_page_view.dart';
 
 abstract class Routes {

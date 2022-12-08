@@ -174,22 +174,11 @@ class GameViewState extends State<GameView> {
                           final correct = st.currentAnswer;
 
                           answers.add(correct);
-                          var rng = Random();
 
                           final range = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
                           range.remove(correct);
 
-                          // if (range.contains(correct)) {
-                          //   int randomNumber = rng.nextInt(10);
-                          //   range.remove(correct);
-                          //   range.add(randomNumber);
-                          //   if (range.contains(correct)) {
-                          //     int randomNumber = rng.nextInt(10);
-                          //     range.remove(correct);
-                          //     range.add(randomNumber);
-                          //   }
-                          // }
 
                           range.shuffle();
 

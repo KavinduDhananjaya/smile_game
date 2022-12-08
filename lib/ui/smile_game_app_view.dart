@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smile_game/theme/primary_theme.dart';
-import 'package:smile_game/theme/styled_colors.dart';
-import 'package:smile_game/ui/auth_page/login_page/login_view.dart';
 import 'package:smile_game/ui/root_page/root_cubit.dart';
 import 'package:smile_game/ui/root_page/root_view.dart';
 import 'package:smile_game/util/routes.dart';
