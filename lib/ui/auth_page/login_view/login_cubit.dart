@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:smile_game/authentication/authentication.dart';
 import 'package:smile_game/db/repository/user_repository.dart';
-import 'package:smile_game/ui/auth_page/login_page/login_state.dart';
+import 'package:smile_game/ui/auth_page/login_view/login_state.dart';
 
 
 class LoginCubit extends Cubit<LoginState> {
@@ -62,13 +62,10 @@ class LoginCubit extends Cubit<LoginState> {
           return;
         }
 
-
         if(fetchEmail.first=="google.com"){
           errorEvent('The account already exists with a google account..please login using google');
           return;
         }
-
-
 
         if(fetchEmail.first=="facebook.com"){
           errorEvent('The account already exists with a facebook account..please login using facebook');

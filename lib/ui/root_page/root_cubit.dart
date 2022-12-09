@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:fcode_bloc/fcode_bloc.dart';
@@ -8,7 +9,6 @@ import 'package:smile_game/authentication/authentication.dart';
 import 'package:smile_game/db/model/user_model.dart';
 import 'package:smile_game/db/repository/user_repository.dart';
 import 'package:smile_game/ui/root_page/root_state.dart';
-
 
 class RootCubit extends Cubit<RootState> {
   RootCubit(BuildContext context) : super(RootState.initialState);
@@ -27,13 +27,12 @@ class RootCubit extends Cubit<RootState> {
   void _getUsersByEmail(final String email) {
     _userRepository
         .query(
-        spec: MultiQueryTransformer(
-            [ComplexWhere('email', isEqualTo: email)]))
+            spec: MultiQueryTransformer(
+                [ComplexWhere('email', isEqualTo: email)]))
         .listen((users) {
       users.isNotEmpty ? _changeCurrentUser(users.first) : null;
     });
   }
-
 
   void handleUserLogged(String email) {
     if (state.userLogged) {
@@ -50,12 +49,12 @@ class RootCubit extends Cubit<RootState> {
     return true;
   }
 
-
-
   _changeCurrentUser(UserModel user) {
     emit(state.clone(
       currentUser: user,
     ));
+
+    _getAllUsers();
   }
 
   Future<void> handleUserLoggedOut() async {
@@ -63,4 +62,23 @@ class RootCubit extends Cubit<RootState> {
     emit(RootState.initialState);
   }
 
+  void _getAllUsers() {
+    _userRepository
+        .query(
+      spec: MultiQueryTransformer([OrderBy('score', descending: true)]),
+    )
+        .listen((subUsers) {
+      subUsers.isNotEmpty ? _changeSubUsers(subUsers.toList()) : null;
+    });
+  }
+
+  _changeSubUsers(List<UserModel> users) {
+    emit(state.clone(usersScores: users));
+
+    for (int i = 0; i < state.usersScores.length; i++) {
+      if (state.usersScores[i].ref?.path == state.currentUser?.ref?.path) {
+        emit(state.clone(rank: i+1));
+      }
+    }
+  }
 }

@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:fcode_bloc/fcode_bloc.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -15,16 +14,17 @@ class SignUpCubit extends Cubit<SignUpState> {
 
   final auth = Authentication();
   final userRepo = UserRepository();
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool isValidEmail(String email) {
     return RegExp(
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
         .hasMatch(email);
   }
 
   Future<void> createUser(
-      String email, String password, String confirmPassword) async {
+      String email, String name, String confirmPassword) async {
     if (email.isEmpty) {
       errorEvent("Email can`t be Empty");
       emit(state.clone(processing: false));
@@ -38,7 +38,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     }
 
     final fetchEmail =
-    await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+        await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
 
     if (fetchEmail.isNotEmpty) {
       errorEvent("Email is already exist");
@@ -46,28 +46,27 @@ class SignUpCubit extends Cubit<SignUpState> {
       return;
     }
 
-    if (password.length < 6 || password.isEmpty) {
+    if (confirmPassword.length < 6 || confirmPassword.isEmpty) {
       errorEvent("Password must have minimum 6 characters");
       emit(state.clone(processing: false));
       return;
     }
 
-    if (password != confirmPassword) {
-      errorEvent("Please Check the  Password Again...!");
-      emit(state.clone(processing: false));
-      return;
-    }
-
     try {
-
-      final formatter =  DateFormat('dd-MM-yyyy');
+      final formatter = DateFormat('dd-MM-yyyy');
       String formattedDate = formatter.format(DateTime.now());
 
-      final register = await auth.register(email, password);
+      final register = await auth.register(email, confirmPassword);
 
       if (register!.isNotEmpty) {
         final user = UserModel(
           email: email,
+          score: 0,
+          difficulty: -1,
+          rank: -1,
+          name: name,
+          level: 1,
+          played: 0,
         );
 
         await userRepo.add(
@@ -84,19 +83,17 @@ class SignUpCubit extends Cubit<SignUpState> {
 
   Future<void> signUpUsingGoogle() async {
     try {
-
       AuthCredential? authUser = await auth.signInWithGoogle();
 
       emit(state.clone(processing: true));
 
       if (authUser != null) {
-
         final UserCredential userCredential =
-        await _auth.signInWithCredential(authUser);
+            await _auth.signInWithCredential(authUser);
 
         User? user1 = userCredential.user;
 
-        if(user1!=null){
+        if (user1 != null) {
           final usersList = await userRepo.querySingle(
               spec: MultiQueryTransformer(
                   [ComplexWhere('email', isEqualTo: user1.email)]));
@@ -107,12 +104,16 @@ class SignUpCubit extends Cubit<SignUpState> {
             return;
           }
 
-          final formatter =  DateFormat('dd-MM-yyyy');
+          final formatter = DateFormat('dd-MM-yyyy');
           String formattedDate = formatter.format(DateTime.now());
 
-
           final user = UserModel(
-              email: user1.email,
+            email: user1.email,
+            score: 0,
+            difficulty: -1,
+            rank: -1,
+            level: 1,
+            played: 0,
           );
 
           await userRepo.add(
@@ -122,7 +123,6 @@ class SignUpCubit extends Cubit<SignUpState> {
           emit(state.clone(
               email: user.email, registered: true, processing: false));
         }
-
       }
     } on FirebaseAuthException catch (e) {
       emit(state.clone(email: '', registered: false, processing: false));
@@ -139,37 +139,37 @@ class SignUpCubit extends Cubit<SignUpState> {
     }
   }
 
-
-  signUpUsingFaceBook() async {
+  Future<void> signUpUsingFaceBook() async {
     final LoginResult result = await FacebookAuth.i.login();
 
     if (result.status == LoginStatus.success) {
       try {
-
         final data = await FacebookAuth.i.getUserData();
 
         final AuthCredential facebookCredential =
-        FacebookAuthProvider.credential(result.accessToken!.token);
+            FacebookAuthProvider.credential(result.accessToken!.token);
         final userCredential = await FirebaseAuth.instance
             .signInWithCredential(facebookCredential);
-
 
         emit(state.clone(processing: true));
 
         if (userCredential.user != null) {
-
-          final list=await userRepo.querySingle(
+          final list = await userRepo.querySingle(
             spec: MultiQueryTransformer(
                 [ComplexWhere('email', isEqualTo: userCredential.user!.email)]),
           );
 
-          if(list.isEmpty){
-
-            final formatter =  DateFormat('dd-MM-yyyy');
+          if (list.isEmpty) {
+            final formatter = DateFormat('dd-MM-yyyy');
             String formattedDate = formatter.format(DateTime.now());
 
             final user = UserModel(
               email: userCredential.user!.email,
+              score: 0,
+              difficulty: -1,
+              rank: -1,
+              level: 1,
+              played: 0,
             );
 
             await userRepo.add(
@@ -178,8 +178,7 @@ class SignUpCubit extends Cubit<SignUpState> {
 
             emit(state.clone(
                 email: user.email, registered: true, processing: false));
-          }else{
-
+          } else {
             emit(state.clone(processing: true));
 
             errorEvent('This email is already exist..please login');
@@ -191,7 +190,6 @@ class SignUpCubit extends Cubit<SignUpState> {
           errorEvent('The account already exists with a different credential');
           return;
         }
-
       } on FirebaseAuthException catch (e) {
         emit(state.clone(processing: false));
 
@@ -235,5 +233,4 @@ class SignUpCubit extends Cubit<SignUpState> {
     emit(state.clone(error: ''));
     emit(state.clone(error: error));
   }
-
 }

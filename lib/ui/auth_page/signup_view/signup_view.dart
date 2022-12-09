@@ -1,6 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:smile_game/ui/auth_page/signup_view/signup_cubit.dart';
+import 'package:smile_game/ui/auth_page/signup_view/signup_state.dart';
+import 'package:smile_game/ui/root_page/root_cubit.dart';
+import 'package:smile_game/ui/root_page/root_view.dart';
+import 'package:smile_game/ui/widgets/common_snack_bar.dart';
 import 'package:smile_game/ui/widgets/context_extension.dart';
 
 import '../../../theme/styled_colors.dart';
@@ -22,13 +28,15 @@ class SignUpViewState extends State<SignUpView> {
     child: CircularProgressIndicator(),
   );
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
 
   late FocusNode _viewFocus;
   late FocusNode _emailFocus;
   late FocusNode _passwordFocus;
+  late FocusNode _confirmPasswordFocus;
   bool passwordVisible = false;
 
   @override
@@ -37,6 +45,7 @@ class SignUpViewState extends State<SignUpView> {
     _viewFocus = FocusNode();
     _emailFocus = FocusNode();
     _passwordFocus = FocusNode();
+    _confirmPasswordFocus = FocusNode();
   }
 
   @override
@@ -45,7 +54,9 @@ class SignUpViewState extends State<SignUpView> {
     _emailFocus.dispose();
     _emailController.dispose();
     _passwordFocus.dispose();
-    _passwordController.dispose();
+    _nameController.dispose();
+    _confirmPasswordController.dispose();
+    _confirmPasswordFocus.dispose();
     super.dispose();
   }
 
@@ -55,8 +66,19 @@ class SignUpViewState extends State<SignUpView> {
 
     final mediaData = MediaQuery.of(context);
 
+    final signUpCubit = BlocProvider.of<SignUpCubit>(context);
+    final rootBloc = BlocProvider.of<RootCubit>(context);
 
-    return Scaffold(
+    void _registerClicked() {
+      ScaffoldMessenger.of(context).showSnackBar(AppSnackBar.loadingSnackBar);
+      final email = (_emailController.text).trim();
+      final name = (_nameController.text).trim();
+      final password = (_confirmPasswordController.text).trim();
+
+      signUpCubit.createUser(email, name, password);
+    }
+
+    final scaffold= Scaffold(
       body: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(_viewFocus),
         child: SingleChildScrollView(
@@ -92,12 +114,29 @@ class SignUpViewState extends State<SignUpView> {
                         height: 32,
                       ),
                       TextFormField(
+                        controller: _emailController,
+                        focusNode: _emailFocus,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         cursorColor: StyledColors.primaryColor,
                         onSaved: (email) {},
                         decoration: const InputDecoration(
-                          hintText: "Your email",
+                          hintText: "Your Email",
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Icon(Icons.email),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12,),
+                      TextFormField(
+                        controller: _nameController,
+                        focusNode: _passwordFocus,
+                        textInputAction: TextInputAction.next,
+                        obscureText: false,
+                        cursorColor: StyledColors.primaryColor,
+                        decoration: const InputDecoration(
+                          hintText: "Your Username",
                           prefixIcon: Padding(
                             padding: EdgeInsets.all(16),
                             child: Icon(Icons.person),
@@ -106,24 +145,13 @@ class SignUpViewState extends State<SignUpView> {
                       ),
                       const SizedBox(height: 12,),
                       TextFormField(
+                        controller: _confirmPasswordController,
+                        focusNode: _confirmPasswordFocus,
                         textInputAction: TextInputAction.done,
                         obscureText: true,
                         cursorColor: StyledColors.primaryColor,
                         decoration: const InputDecoration(
-                          hintText: "Your password",
-                          prefixIcon: Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Icon(Icons.lock),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12,),
-                      TextFormField(
-                        textInputAction: TextInputAction.done,
-                        obscureText: true,
-                        cursorColor: StyledColors.primaryColor,
-                        decoration: const InputDecoration(
-                          hintText: "Confirm password",
+                          hintText: "Password",
                           prefixIcon: Padding(
                             padding: EdgeInsets.all(16),
                             child: Icon(Icons.lock),
@@ -136,7 +164,7 @@ class SignUpViewState extends State<SignUpView> {
                         width: context.dynamicWidth(0.8),
                         child: InkWell(
                           onTap : () {
-                            Navigator.pop(context);
+                            _registerClicked();
                           },
                           child: Card(
                             color: Colors.deepPurpleAccent,
@@ -219,6 +247,58 @@ class SignUpViewState extends State<SignUpView> {
           ),
         ),
       ),
+    );
+
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<SignUpCubit, SignUpState>(
+          listenWhen: (pre, current) => pre.error != current.error,
+          listener: (context, state) {
+            if (state.error.isNotEmpty) {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(AppSnackBar.showErrorSnackBar(state.error));
+            } else {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            }
+          },
+        ),
+        BlocListener<SignUpCubit, SignUpState>(
+          listenWhen: (pre, current) => pre.processing != current.processing,
+          listener: (context, state) {
+            if (state.processing) {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(AppSnackBar.loadingSnackBar);
+            } else {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            }
+          },
+        ),
+        BlocListener<SignUpCubit, SignUpState>(
+          listenWhen: (pre, current) =>
+          pre.registered != current.registered ||
+              pre.email != current.email,
+          listener: (context, state) {
+            if (state.registered && state.email.isNotEmpty) {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+
+              rootBloc.handleUserLogged(state.email);
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RootView(
+                    email: state.email,
+                    fromSignUp: true,
+                  ),
+                ),
+              );
+            }
+          },
+        ),
+      ],
+      child: scaffold,
     );
   }
 }

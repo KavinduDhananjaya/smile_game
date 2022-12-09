@@ -15,6 +15,11 @@ class UserRepository extends FirebaseRepository<UserModel> {
       email: data['email'] ?? '',
       name: data['name'] ?? '',
       profileImage: data['profileImage'] ?? '',
+      rank: data['rank'] ?? -1,
+      difficulty: data['difficulty'] ?? -1,
+      score: data['score'] ?? 0,
+      level: data['level'] ?? 1,
+      played: data['played'] ?? 0,
     );
   }
 
@@ -24,6 +29,11 @@ class UserRepository extends FirebaseRepository<UserModel> {
       'email': value.email,
       'name': value.name,
       'profileImg': value.profileImage,
+      'score': value.score,
+      'rank': value.rank,
+      'difficulty': value.difficulty,
+      'level': value.level,
+      'played': value.played,
     };
   }
 
@@ -50,7 +60,6 @@ class UserRepository extends FirebaseRepository<UserModel> {
       spec: spec,
     );
   }
-
 
   @override
   Stream<Iterable<UserModel>> query({
