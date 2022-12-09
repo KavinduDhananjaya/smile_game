@@ -2,9 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fcode_bloc/fcode_bloc.dart';
 
 class UserModel extends DBModel {
-  static const NAME = 'name';
-  static const EMAIL = 'email';
-  static const PROFILE_IMAGE = 'profileImage';
 
   String? name;
   String? email;

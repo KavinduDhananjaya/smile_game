@@ -1,9 +1,7 @@
 import 'package:smile_game/db/repository/smile_api_repository.dart';
 import 'package:http/http.dart' as http;
 
-
-
-class SmileApiRepositoryImpl extends SmileApiRepository{
+class SmileApiRepositoryImpl implements SmileApiRepository {
 
   @override
   Future<http.Response> getData() async {

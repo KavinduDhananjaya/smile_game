@@ -69,6 +69,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       final response = await _apiRepository.getData();
 
       if (response.statusCode == 200) {
+
         final jsonResponse =
             convert.jsonDecode(response.body) as Map<String, dynamic>;
 

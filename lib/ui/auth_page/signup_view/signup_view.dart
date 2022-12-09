@@ -121,7 +121,7 @@ class SignUpViewState extends State<SignUpView> {
                         cursorColor: StyledColors.primaryColor,
                         onSaved: (email) {},
                         decoration: const InputDecoration(
-                          hintText: "Your email",
+                          hintText: "Your Email",
                           prefixIcon: Padding(
                             padding: EdgeInsets.all(16),
                             child: Icon(Icons.email),

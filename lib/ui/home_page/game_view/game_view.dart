@@ -147,7 +147,7 @@ class GameViewState extends State<GameView> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             width: double.infinity,
                             child: Text(
-                              'Question : ${snapshot.currentIndex}/10',
+                              'Question : ${snapshot.currentIndex+1}/10',
                               textAlign: TextAlign.start,
                               style: const TextStyle(
                                   fontSize: 20, color: Colors.white),
@@ -304,6 +304,7 @@ class GameViewState extends State<GameView> {
       ),
     );
 
+
     return MultiBlocListener(listeners: [
       BlocListener<HomePageCubit, HomePageState>(
         listenWhen: (pre, current) => pre.error != current.error,
@@ -421,4 +422,5 @@ class GameViewState extends State<GameView> {
       },
     );
   }
+
 }

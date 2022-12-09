@@ -124,7 +124,7 @@ class LoginViewState extends State<LoginView> {
                         cursorColor: StyledColors.primaryColor,
                         onSaved: (email) {},
                         decoration: const InputDecoration(
-                          hintText: "Your email",
+                          hintText: "Your Email",
                           prefixIcon: Padding(
                             padding: EdgeInsets.all(16),
                             child: Icon(Icons.person),

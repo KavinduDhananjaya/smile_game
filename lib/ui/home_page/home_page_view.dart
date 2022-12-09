@@ -168,7 +168,7 @@ class HomePageView extends StatelessWidget {
                                           fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  "Marks",
+                                  "Score",
                                   style: Theme.of(context)
                                       .textTheme
                                       .headline5
